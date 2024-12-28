@@ -2,14 +2,16 @@ services:
   app:
     container_name: challenge-koibanx-app
     build:
-      context: .
-      dockerfile: Dockerfile
-      target: base
+      context: ../../
+      dockerfile: ./docker/local/Dockerfile
+    command: yarn run dev
     restart: always
     env_file:
       - ../../.envs/.local/.api
+    volumes:
+      - ../../src:/app/src
     ports:
-      - ${PORT}:${PORT}
+      - 3000:3000
     links:
       - mongo
     depends_on:
@@ -17,7 +19,7 @@ services:
     networks:
       - backend
 
-  mongodb:
+  mongo:
     container_name: challenge-koibanx-mongo
     image: mongo:7.0.16
     restart: unless-stopped

@@ -2,7 +2,7 @@
 PORT=3000
 
 # URL of the Mongo DB
-MONGODB_URL=mongodb://root:example@mongo:27017/
+MONGODB_URL=mongo://root:example@mongo:27017/challenge
 
 # JWT
 # JWT secret key

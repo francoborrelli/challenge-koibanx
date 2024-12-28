@@ -9,7 +9,7 @@
     "build": "tsc",
     "lint": "eslint \"src\"",
     "start": "dotenv -c '.env' -- node dist/app",
-    "dev": "nodemon -r dotenv/config --legacy-watch \"./**/*.ts\" --ignore \"./**/*.spec.ts\" --exec \"tsx\" ./src/app.ts",
+    "dev": "nodemon -r dotenv/config --legacy-watch \"./**/*.ts\" --ignore \"./**/*.spec.ts\" --exec \"tsx\" ./src/index.ts",
     "bash": "docker compose exec api bash"
   },
   "dependencies": {
@@ -29,6 +29,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.2",
     "morgan": "^1.10.0",
+    "nodemon": "^3.1.9",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "validator": "^13.12.0",
@@ -56,6 +57,7 @@
     "prettier": "^3.4.2",
     "supertest": "^7.0.0",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
 }

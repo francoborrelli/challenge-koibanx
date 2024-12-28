@@ -6,12 +6,9 @@ RUN apt-get update && apt install -y --no-install-recommends curl
 
 WORKDIR /app
 
-# RUN chown node:node /app
-# USER node
+ENV NODE_ENV=development
 
-COPY package.json yarn.lock tsconfig.json .eslintrc.cjs wait-for-it.sh ./
-
-RUN chmod +x wait-for-it.sh
+COPY package.json yarn.lock tsconfig.json .eslintrc.cjs ./
 
 RUN yarn install
 
