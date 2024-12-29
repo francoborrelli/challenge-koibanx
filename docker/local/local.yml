@@ -4,14 +4,14 @@ services:
     build:
       context: ../../
       dockerfile: ./docker/local/Dockerfile
-    command: yarn run test
+    command: yarn run dev
     restart: always
     env_file:
       - ../../.envs/.local/.api
     volumes:
       - ../../src:/app/src
     ports:
-      - 3000:3000
+      - '3000:3000'
     links:
       - mongodb
     depends_on:

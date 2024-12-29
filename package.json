@@ -15,7 +15,7 @@
     "test:js": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -i --colors --verbose --detectOpenHandles -- 'js$'",
     "prettier": "prettier --check **/*.ts",
     "prettier:fix": "prettier --write **/*.ts",
-    "dev": "nodemon -r dotenv/config --legacy-watch \"./**/*.ts\" --ignore \"./**/*.spec.ts\" --exec \"tsx\" ./src/index.ts",
+    "dev": "nodemon --exec tsx ./src/index.ts",
     "bash": "docker compose exec api bash"
   },
   "dependencies": {

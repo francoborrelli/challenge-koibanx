@@ -1,0 +1,5 @@
+{
+  "verbose": true,
+  "watch": ["src/**/*.ts"],
+  "exec": "tsx -r dotenv/config ./src/index.ts"
+}

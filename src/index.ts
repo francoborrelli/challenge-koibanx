@@ -5,43 +5,52 @@ import logger from './modules/logger/logger';
 
 let server: any;
 
-mongoose
-  .connect(config.mongoose.url)
-  .then(() => {
-    logger.info('Connected to MongoDB');
-    server = app.listen(config.port, () => {
-      logger.info(`Listening to port ${config.port}`);
-    });
-  })
-  .catch((err) => {
-    logger.error(err);
-  })
-  .finally(() => {
-    logger.info('MongoDB connection closed');
-  });
+const startServer = async () => {
+  try {
+    await mongoose.connect(config.mongoose.url, {}); // Conexión a MongoDB
+    logger.info('MongoDB connected successfully');
+  } catch (error) {
+    logger.error('Connection error: ', error);
+    process.exit(1); // Termina el proceso si la conexión falla
+  }
 
-const exitHandler = () => {
+  // Inicia el servidor si la conexión a la base de datos es exitosa
+  server = app.listen(config.port, () => {
+    logger.info(`Listening on port ${config.port}`);
+  });
+};
+
+const exitHandler = async () => {
   if (server) {
     server.close(() => {
       logger.info('Server closed');
+      mongoose.disconnect(); // Desconectar MongoDB al cerrar el servidor
       process.exit(1);
     });
   } else {
-    process.exit(1);
+    process.exit(1); // Si no hay servidor, finaliza el proceso
   }
 };
 
-const unexpectedErrorHandler = (error: string) => {
-  logger.error(error);
+const unexpectedErrorHandler = (error: any) => {
+  logger.error(`Unexpected error: ${error}`);
   exitHandler();
 };
 
-process.on('uncaughtException', unexpectedErrorHandler);
-process.on('unhandledRejection', unexpectedErrorHandler);
+// Maneja excepciones no capturadas
+process.on('uncaughtException', (error) => unexpectedErrorHandler(error));
+process.on('unhandledeRejection', (error) => unexpectedErrorHandler(error));
 
+// Manejo de señales de terminación (SIGTERM, SIGINT)
 process.on('SIGTERM', () => {
   logger.info('SIGTERM received');
-  if (server) {
-    server.close();
-  }
+  exitHandler();
 });
+
+process.on('SIGINT', () => {
+  logger.info('SIGINT received');
+  exitHandler();
+});
+
+// Inicia el servidor
+startServer();
