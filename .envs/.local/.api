@@ -19,3 +19,4 @@ JWT_VERIFY_EMAIL_EXPIRATION_MINUTES=10
 # Cookie configs
 COOKIE_SECRET=thisisasamplesecret
 
+FILES_UPLOAD_PATH=/app/uploads

@@ -9,6 +9,7 @@ const envVarsSchema = Joi.object()
     JWT_SECRET: Joi.string().required().description('JWT secret key'),
     JWT_ACCESS_EXPIRATION_MINUTES: Joi.number().default(30).description('minutes after which access tokens expire'),
     JWT_REFRESH_EXPIRATION_DAYS: Joi.number().default(30).description('days after which refresh tokens expire'),
+    FILES_UPLOAD_PATH: Joi.string().required().description('File upload path'),
     // JWT_RESET_PASSWORD_EXPIRATION_MINUTES: Joi.number()
     //   .default(10)
     //   .description('minutes after which reset password token expires'),
@@ -34,6 +35,9 @@ const config = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     },
+  },
+  fileUpload: {
+    path: envVars.FILES_UPLOAD_PATH,
   },
   jwt: {
     secret: envVars.JWT_SECRET,
