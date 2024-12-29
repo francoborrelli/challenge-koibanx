@@ -1,73 +1,150 @@
-import mongoose from 'mongoose';
+// Utils
 import httpStatus from 'http-status';
-import { IUploadTaskDoc, NewIUploadTaskDocData } from './uploadedTask.interfaces';
-import UploadTask from './uploadedTask.model';
+
+// Models
+import mongoose from 'mongoose';
+import UploadTask, { UploadTaskData, UploadTaskError } from './uploadedTask.model';
+
+// Interfaces
 import { ApiError } from '../errors';
+import type { IUploadTaskErrorDoc, NewIUploadTaskError } from './uploadedTask.interfaces';
+import type { IUploadTaskDataDoc, NewIUploadTaskDataItem } from './uploadedTask.interfaces';
+import type { IUploadTaskDoc, NewIUploadTaskDocData, UploadStatus } from './uploadedTask.interfaces';
+
+/*************************************************
+ *
+ *            UPLOAD TASK RELATED
+ *
+ ************************************************/
 
 /**
- * Create a task
- * @returns {Promise<IUploadTaskDoc>}
+ * Create a new upload task
+ * @param {NewIUploadTaskDocData} data - The data for the new upload task
+ * @returns {Promise<IUploadTaskDoc>} - The created upload task document
  */
 export const createTask = async (data: NewIUploadTaskDocData): Promise<IUploadTaskDoc> => {
   return UploadTask.create(data);
 };
 
 /**
- * Mark task as done success
- * @param {mongoose.Types.ObjectId} taskId
- * @returns {Promise<ITaskDoc | null>}
+ * Get task by id
+ * @param {mongoose.Types.ObjectId} taskId - The ID of the task to retrieve
+ * @returns {Promise<IUploadTaskDoc | null>} - The task document or null if not found
  */
-export const markTaskDoneSuccess = async (
+export const getTaskById = async (taskId: mongoose.Types.ObjectId): Promise<IUploadTaskDoc | null> => {
+  const task = await UploadTask.findById(taskId);
+  if (!task) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
+  }
+  return task;
+};
+
+/**
+ * Mark task as done successfully
+ * @param {mongoose.Types.ObjectId} taskId - The ID of the task to mark as done
+ * @returns {Promise<IUploadTaskDoc | null>} - The updated task document or null if not found
+ */
+export const updateStatus = async (
   taskId: mongoose.Types.ObjectId,
-  data: Record<string, any>[]
+  status: UploadStatus
 ): Promise<IUploadTaskDoc | null> => {
   const task = await UploadTask.findById(taskId);
   if (!task) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
   }
-  task.status = 'done';
-  task.data = data.map((record) => new Map(Object.entries(record)));
+  task.status = status;
   await task.save();
   return task;
 };
 
+/*************************************************
+ *
+ *            UPLOAD TASK DATA RELATED
+ *
+ ************************************************/
+
 /**
- * Mark task as done error
- * @param {mongoose.Types.ObjectId} taskId
- * @returns {Promise<ITaskDoc | null>}
+ * Create data for a task
+ * @param {mongoose.Types.ObjectId} taskId - The ID of the task to associate the data with
+ * @param {NewIUploadTaskDataItem[]} items - The data items to create
+ * @returns {Promise<IUploadTaskDataDoc[] | null>} - The created task data documents or null if creation fails
  */
-export const markTaskDoneError = async (taskId: mongoose.Types.ObjectId): Promise<IUploadTaskDoc | null> => {
-  const task = await UploadTask.findById(taskId);
-  if (!task) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
-  }
-  task.status = 'done';
-  await task.save();
-  return task;
+export const createTaskData = async (
+  taskId: mongoose.Types.ObjectId,
+  items: NewIUploadTaskDataItem[]
+): Promise<IUploadTaskDataDoc[] | null> => {
+  const data = items.map((data) => ({ data, uploadTask: taskId }));
+  return UploadTaskData.create(data);
 };
 
 /**
- * Get task status by ID
- * @param {mongoose.Types.ObjectId} taskId
- * @returns {Promise<string>}
+ * Get a list of data for a task with pagination
+ * @param {mongoose.Types.ObjectId} taskId - The ID of the task to retrieve data for
+ * @param {number} page - The page number for pagination
+ * @param {number} limit - The number of items per page
+ * @returns {Promise<{ data: IUploadTaskDataDoc[], total: number }>} - The list of data and total count
  */
-export const getTaskStatusById = async (taskId: mongoose.Types.ObjectId): Promise<string> => {
+export const getTaskData = async (
+  taskId: mongoose.Types.ObjectId,
+  page: number,
+  limit: number
+): Promise<{ data: IUploadTaskDataDoc['data'][]; total: number; page: number; limit: number }> => {
   const task = await UploadTask.findById(taskId);
   if (!task) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
   }
-  return task.status;
+
+  const skip = (page - 1) * limit;
+  const [data, total] = await Promise.all([
+    UploadTaskData.find({ uploadTask: taskId }, 'data -_id').skip(skip).limit(limit),
+    UploadTaskData.countDocuments({ uploadTask: taskId }),
+  ]);
+  return { data: data.map((a) => a.data), total, page, limit };
+};
+
+/*************************************************
+ *
+ *            UPLOAD TASK ERRORS RELATED
+ *
+ ************************************************/
+
+/**
+ * Create errors for a task
+ * @param {mongoose.Types.ObjectId} taskId - The ID of the task to associate the errors with
+ * @param {NewIUploadTaskError[]} error - The error items to create
+ * @returns {Promise<IUploadTaskErrorDoc[] | null>} - The created task error documents or null if creation fails
+ */
+export const createTaskErrors = async (
+  taskId: mongoose.Types.ObjectId,
+  error: NewIUploadTaskError[]
+): Promise<IUploadTaskErrorDoc[] | null> => {
+  return UploadTaskError.create(error.map((item) => ({ ...item, uploadTask: taskId })));
 };
 
 /**
- * Get task errors by ID
- * @param {mongoose.Types.ObjectId} taskId
- * @returns {Promise<any[]>}
+ * Get a list of errors for a task with pagination and sorting by row and column number
+ * @param {mongoose.Types.ObjectId} taskId - The ID of the task to retrieve errors for
+ * @param {number} page - The page number for pagination
+ * @param {number} limit - The number of items per page
+ * @returns {Promise<{ errors: IUploadTaskErrorDoc[], total: number }>} - The list of errors and total count
  */
-export const getTaskErrorsById = async (taskId: mongoose.Types.ObjectId): Promise<any[]> => {
+export const getTaskErrors = async (
+  taskId: mongoose.Types.ObjectId,
+  page: number,
+  limit: number
+): Promise<{ errors: IUploadTaskErrorDoc[]; total: number; page: number; limit: number }> => {
   const task = await UploadTask.findById(taskId);
   if (!task) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
   }
-  return task.errors_data || [];
+
+  const skip = (page - 1) * limit;
+  const [errors, total] = await Promise.all([
+    UploadTaskError.find({ uploadTask: taskId }, 'row column message -_id')
+      .sort({ row: 1, column: 1 })
+      .skip(skip)
+      .limit(limit),
+    UploadTaskError.countDocuments({ uploadTask: taskId }),
+  ]);
+  return { errors, total, page, limit };
 };

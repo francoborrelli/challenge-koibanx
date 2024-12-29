@@ -19,6 +19,60 @@ components:
         name: fake name
         role: user
 
+    UploadedTask:
+      type: object
+      properties:
+        taskId:
+          type: string
+        userId:
+          type: string
+        status:
+          type: string
+          enum: [pending, completed, failed]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        taskId: 123e4567-e89b-12d3-a456-426614174000
+        userId: 5ebac534954b54139806c112
+        status: pending
+        createdAt: 2023-10-01T12:00:00Z
+        updatedAt: 2023-10-01T12:00:00Z
+
+    UploadTaskData:
+      type: object
+      properties:
+      uploadTask:
+        type: string
+      data:
+        type: object
+        additionalProperties: true
+      example:
+      uploadTask: 123e4567-e89b-12d3-a456-426614174000
+      data:
+        key1: value1
+        key2: value2
+
+    UploadTaskError:
+      type: object
+      properties:
+      uploadTask:
+        type: string
+      row:
+        type: integer
+      column:
+        type: integer
+      message:
+        type: string
+      example:
+      uploadTask: 123e4567-e89b-12d3-a456-426614174000
+      row: 1
+      column: 2
+      message: "Invalid data format"
+
     Token:
       type: object
       properties:
