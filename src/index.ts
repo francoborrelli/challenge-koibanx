@@ -5,6 +5,8 @@ import logger from './modules/logger/logger';
 
 let server: any;
 
+console.log('config.dsdfsdfsdfsdf.url', config.mongoose.url);
+
 mongoose
   .connect(config.mongoose.url)
   .then(() => {
@@ -15,6 +17,9 @@ mongoose
   })
   .catch((err) => {
     logger.error(err);
+  })
+  .finally(() => {
+    logger.info('MongoDB connection closed');
   });
 
 const exitHandler = () => {

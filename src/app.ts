@@ -10,6 +10,7 @@ import { morgan } from './modules/logger';
 import { jwtStrategy } from './modules/auth';
 import { authLimiter } from './utils';
 import { ApiError, errorConverter, errorHandler } from './modules/errors';
+import routes from './routes/v1';
 
 const app: Express = express();
 
@@ -45,6 +46,9 @@ passport.use('jwt', jwtStrategy);
 if (config.env === 'production') {
   app.use('/v1/auth', authLimiter);
 }
+
+// v1 api routes
+app.use('/v1', routes);
 
 // send back a 404 error for any unknown api request
 app.use((_req, _res, next) => {
