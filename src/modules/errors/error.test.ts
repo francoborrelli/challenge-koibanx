@@ -64,6 +64,7 @@ describe('Error middlewares', () => {
       expect(next).toHaveBeenCalledWith(
         expect.objectContaining({
           statusCode: error.statusCode,
+          // @ts-ignore
           message: httpStatus[error.statusCode],
           isOperational: false,
         })

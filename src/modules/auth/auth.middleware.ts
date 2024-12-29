@@ -29,7 +29,11 @@ const authMiddleware =
   (...requiredRights: string[]) =>
   async (req: Request, res: Response, next: NextFunction) =>
     new Promise<void>((resolve, reject) => {
-      passport.authenticate('jwt', { session: false }, verifyCallback(req, resolve, reject, requiredRights))(req, res, next);
+      passport.authenticate('jwt', { session: false }, verifyCallback(req, resolve, reject, requiredRights))(
+        req,
+        res,
+        next
+      );
     })
       .then(() => next())
       .catch((err) => next(err));

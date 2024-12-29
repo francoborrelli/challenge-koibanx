@@ -4,6 +4,7 @@ import { beforeAll, beforeEach, afterAll } from '@jest/globals';
 
 const setupTestDB = () => {
   beforeAll(async () => {
+    console.log('config.mongoose.url', config.mongoose.url);
     await mongoose.connect(config.mongoose.url);
   });
 

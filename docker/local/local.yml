@@ -4,7 +4,7 @@ services:
     build:
       context: ../../
       dockerfile: ./docker/local/Dockerfile
-    command: yarn run dev
+    command: yarn run test
     restart: always
     env_file:
       - ../../.envs/.local/.api

@@ -8,7 +8,7 @@ WORKDIR /app
 
 ENV NODE_ENV=development
 
-COPY package.json yarn.lock tsconfig.json .eslintrc.cjs ./
+COPY package.json yarn.lock tsconfig.json .eslintrc.cjs jest.config.js ./
 
 RUN yarn install
 
