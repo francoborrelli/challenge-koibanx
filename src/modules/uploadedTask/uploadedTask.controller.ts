@@ -15,6 +15,7 @@ import { AVAILABLE_FORTATTERS } from './uploadedTask.constants';
 
 // Interfaces
 import type { Request, Response } from 'express';
+import type { IUserDoc } from '../user/user.interfaces';
 
 /*************************************************
  *
@@ -34,13 +35,14 @@ import type { Request, Response } from 'express';
  */
 export const createTask = catchAsync(async (req: Request, res: Response) => {
   const { file, body } = req;
+  const user = req.user as IUserDoc;
 
   if (!file) return res.status(httpStatus.BAD_REQUEST).send('No file uploaded');
 
   const { formatter } = body;
   const { filename, path: filepath } = file;
   // Create a new task
-  const task = await taskService.createTask({ filename, filepath, formatter });
+  const task = await taskService.createTask({ filename, filepath, formatter, uploaded_by: user?.id });
 
   // Add the task to the queue
   await uploadedTaskQueue.add(`task upload`, { jobData: { id: task.id } });

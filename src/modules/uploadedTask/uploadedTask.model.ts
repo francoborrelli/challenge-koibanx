@@ -42,7 +42,7 @@ const uploadTaskSchema = new mongoose.Schema<IUploadTaskDoc, IUploadTaskModel>(
       required: true,
     },
     uploaded_by: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: false,
     },

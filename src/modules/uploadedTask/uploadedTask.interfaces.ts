@@ -31,8 +31,8 @@ export interface IUploadTaskDoc extends Document {
   filename: string;
   filepath: string;
   formatter: number;
-  uploaded_by: string;
   status: UploadStatus;
+  uploaded_by: mongoose.Schema.Types.ObjectId;
   getInitial(): { _id: string; status: string; createdAt: Date; mappings: Record<string, MappingTypes> };
 }
 
@@ -40,7 +40,7 @@ export interface IUploadTaskModel extends Model<IUploadTaskDoc> {
   paginate(filter: Record<string, any>, options: IOptions): Promise<QueryResult>;
 }
 
-export type NewIUploadTaskDocData = Pick<IUploadTaskDoc, 'filename' | 'filepath' | 'formatter'>;
+export type NewIUploadTaskDocData = Pick<IUploadTaskDoc, 'filename' | 'filepath' | 'formatter' | 'uploaded_by'>;
 
 /*************************************************
  *
