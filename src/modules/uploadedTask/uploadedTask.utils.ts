@@ -116,60 +116,65 @@ export const processTask = async (id: string): Promise<void> => {
   try {
     const mapping = AVAILABLE_FORTATTERS[task.formatter];
 
-    const workbook = new ExcelJS.Workbook();
+    // Uso Stream para leer el archivo, esto es útil para archivos grandes
+    // ya que no se carga todo en memoria
+    const workbook = new ExcelJS.stream.xlsx.WorkbookReader(filePath, { worksheets: 'emit' });
 
-    // Leer el archivo Excel desde el disco en streaming
-    await workbook.xlsx.readFile(filePath);
-    const worksheet = workbook.worksheets[0]; // Seleccionar la primera hoja
+    workbook.read();
 
-    // Procesar filas una por una en streaming
-    worksheet.eachRow({ includeEmpty: false }, async (row, rowIndex) => {
-      // Ignorar la primera fila (cabecera)
-      if (rowIndex === 1) return;
+    for await (const worksheetReader of workbook) {
+      if (!worksheetReader) continue;
+      // @ts-ignore
+      if (worksheetReader.id !== 1) continue;
 
-      const mappedRow: Record<string, any> = {};
-      let rowHasError = false;
+      for await (const row of worksheetReader) {
+        const rowIndex = row.number;
+        if (rowIndex === 1) continue;
 
-      // Mapear y validar cada celda
-      row.eachCell({ includeEmpty: true }, (cell, colIndex) => {
-        const columnName = Object.keys(mapping)[colIndex - 1]; // Mapeo según el índice
-        const mappedKey = mapping[columnName];
+        const mappedRow: Record<string, any> = {};
+        let rowHasError = false;
 
-        if (!columnName) {
-          return errors.push({
-            row: rowIndex,
-            column: colIndex,
-            message: 'No se esperaba un valor en esta columna',
-          });
+        row.eachCell({ includeEmpty: true }, (cell, colIndex) => {
+          const columnName = Object.keys(mapping)[colIndex - 1]; // Mapeo según el índice
+          const mappedKey = mapping[columnName];
+
+          if (!columnName) {
+            return errors.push({
+              row: rowIndex,
+              column: colIndex,
+              message: 'No se esperaba un valor en esta columna',
+            });
+          }
+
+          const value = cell.value;
+          const optional = columnName.endsWith('?');
+
+          try {
+            mappedRow[columnName] = mapExcelRow(value, mappedKey, optional);
+          } catch (error: any) {
+            errors.push({
+              row: rowIndex,
+              column: colIndex,
+              message: error.message,
+            });
+            rowHasError = true;
+          }
+        });
+
+        if (!rowHasError) {
+          await taskService.createTaskData(task.id, [mappedRow]);
+        } else {
+          await taskService.createTaskErrors(task.id, errors);
         }
-
-        const value = cell.value;
-        const optional = columnName.endsWith('?');
-
-        try {
-          mappedRow[columnName] = mapExcelRow(value, mappedKey, optional);
-        } catch (error: any) {
-          errors.push({
-            row: rowIndex,
-            column: colIndex,
-            message: error.message,
-          });
-          rowHasError = true;
-        }
-      });
-
-      if (!rowHasError) {
-        await taskService.createTaskData(task.id, [mappedRow]);
-      } else {
-        await taskService.createTaskErrors(task.id, errors);
       }
-    });
+    }
 
     // Eliminar el archivo del servidor una vez procesado
     // fs.unlinkSync(filePath);
   } catch (error) {
     // Eliminar el archivo en caso de error
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    // if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    console.log(JSON.stringify(error));
     console.error('Error procesando el archivo Excel:', error);
   }
 
