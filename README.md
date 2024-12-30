@@ -99,3 +99,71 @@ Para limpiar el entorno, sigue estos pasos:
   docker logs challenge-koibanx-app
   docker logs challenge-koibanx-worker
   ```
+
+---
+
+### **Estructura del Proyecto Challenge-Koibanx** 📂
+
+#### **Carpetas principales**:
+
+1. **`.envs`**
+   Contiene las configuraciones de entorno organizadas por perfiles, como desarrollo, producción, etc. Ayuda a gestionar variables de entorno de forma segura.
+
+2. **`docker`**
+   Incluye configuraciones específicas para construir y ejecutar contenedores Docker, como `Dockerfile` y scripts relacionados.
+
+3. **`src`**
+   El código fuente principal de la aplicación. Dentro de esta carpeta, encontramos subdirectorios clave:
+
+   - **`config`**
+     Contiene configuraciones y utilidades globales, como la configuración de roles y permisos.
+
+   - **`modules`**
+     Esta carpeta agrupa funcionalidades específicas de la aplicación organizadas como módulos independientes:
+
+     - **`auth`**: Funcionalidades relacionadas con autenticación y autorización.
+     - **`errors`**: Gestión y definición de errores personalizados.
+     - **`logger`**: Configuración de logging para monitoreo y debugging.
+     - **`paginate`**: Implementación de lógica de paginación para endpoints o consultas.
+     - **`swagger`**: Configuración de Swagger para generar la documentación de la API.
+     - **`toJSON`**: Utilidades para transformar objetos en formato JSON.
+     - **`token`**: Lógica para manejo de tokens (JWT, por ejemplo).
+     - **`uploadedTask`**: Funcionalidades específicas para manejar las tareas subidas.
+     - **`user`**: Módulo para gestionar usuarios de la aplicación.
+
+   - **`routes/v1`**
+     Define las rutas de la API versión 1 (`/v1`) configurando los endpoints disponibles.
+
+   - **`utils`**
+     Contiene utilidades y funciones comunes que son reutilizadas a lo largo del proyecto.
+
+   - **`validations`**
+     Implementa lógica de validación para datos de entrada, usando la librería `Joi`.
+
+   - **`app.ts`**
+     Archivo principal que inicia la aplicación. Aquí se configura y se arranca el servidor Express, incluyendo middleware, rutas, y configuraciones básicas.
+
+   - **`index.ts`**
+     Puede ser el punto de entrada que centraliza la inicialización de la aplicación.
+
+   - **`workers.ts`**
+     Archivo que define y ejecuta los workers para procesar tareas en segundo plano utilizando BullMQ.
+
+---
+
+#### **Archivos principales**:
+
+1. **`.env` y `.env.example`**
+   Define variables de entorno necesarias para Docker y Docker-compose. `.env.example` actúa como plantilla para configurar nuevas instancias del proyecto.
+
+2. **`.dockerignore`**
+   Lista de archivos y carpetas que Docker debe ignorar al construir imágenes.
+
+3. **`.eslint*` y `.prettier*`**
+   Configuración para linters (`ESLint`) y formateadores (`Prettier`) para mantener el código limpio y consistente.
+
+4. **`jest.config.js`**
+   Configuración de Jest para pruebas automatizadas.
+
+5. **`.editorconfig`**
+   Archivo para mantener la consistencia de estilo entre diferentes editores y entornos de desarrollo.
