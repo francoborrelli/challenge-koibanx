@@ -1,6 +1,7 @@
+import swaggerJSDoc from 'swagger-jsdoc';
 import config from '../../config/config';
 
-const swaggerDefinition = {
+const swaggerDefinition: swaggerJSDoc.Options['swaggerDefinition'] = {
   openapi: '3.0.0',
   info: {
     title: 'challenge-koibanx',
