@@ -52,10 +52,12 @@ export default router;
 
 /**
  * @swagger
- * /v1/uploadedTask:
+ * /tasks:
  *   post:
  *     summary: Create a new uploaded task
  *     tags: [UploadedTask]
+ *     security:
+ *      - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -66,6 +68,9 @@ export default router;
  *               file:
  *                 type: string
  *                 format: binary
+ *               formatter:
+ *                 type: number
+ *                 description: The formatter to be used for the uploaded task
  *     responses:
  *       200:
  *         description: The uploaded task was successfully created
@@ -77,10 +82,29 @@ export default router;
 
 /**
  * @swagger
- * /v1/uploadedTask/{taskId}/status:
+ * /tasks/formatters:
+ *   get:
+ *     summary: Get the formatters for uploaded tasks
+ *     tags: [UploadedTask]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: A list of formatters
+ *       400:
+ *         description: Bad request
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /tasks/{taskId}/status:
  *   get:
  *     summary: Get the status of an uploaded task
  *     tags: [UploadedTask]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: taskId
@@ -101,10 +125,12 @@ export default router;
 
 /**
  * @swagger
- * /v1/uploadedTask/{taskId}/data:
+ * /tasks/{taskId}/data:
  *   get:
  *     summary: Get the data of an uploaded task
  *     tags: [UploadedTask]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: taskId
@@ -112,6 +138,20 @@ export default router;
  *           type: string
  *         required: true
  *         description: The ID of the uploaded task
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         default: 10
+ *         description: Maximum number of users
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number
  *     responses:
  *       200:
  *         description: The data of the uploaded task
@@ -125,10 +165,12 @@ export default router;
 
 /**
  * @swagger
- * /v1/uploadedTask/{taskId}/errors:
+ * /tasks/{taskId}/errors:
  *   get:
  *     summary: Get the errors of an uploaded task
  *     tags: [UploadedTask]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: taskId
@@ -136,6 +178,20 @@ export default router;
  *           type: string
  *         required: true
  *         description: The ID of the uploaded task
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         default: 10
+ *         description: Maximum number of users
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number
  *     responses:
  *       200:
  *         description: The errors of the uploaded task

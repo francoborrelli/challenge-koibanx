@@ -4,8 +4,6 @@ import { Processor, Queue, Worker, WorkerOptions } from 'bullmq';
 import config from '../../config/config';
 
 // Services
-import * as taskService from './uploadedTask.service';
-import mongoose from 'mongoose';
 import { processTask } from './uploadedTask.utils';
 
 const redisConfig = {
