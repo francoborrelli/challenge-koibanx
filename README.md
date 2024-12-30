@@ -22,7 +22,7 @@ El archivo `docker-compose.yml` define los siguientes servicios:
    - La documentación de la API con Swagger está disponible en: [http://localhost:3000/v1/docs](http://localhost:3000/v1/docs) 📚.
 
 2. **`worker`** 🏗️
-   Este servicio ejecuta las tareas de fondo mediante BullMQ.
+   Este servicio ejecuta las tareas de fondo mediante [BullMQ](https://docs.bullmq.io/).
 
    - Utiliza la misma imagen y configuración básica que el servicio `app`.
    - Ejecuta el comando `yarn run worker`.
