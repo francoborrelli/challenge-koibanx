@@ -1,17 +1,25 @@
+// Utils
 import httpStatus from 'http-status';
+
+// Models
 import mongoose from 'mongoose';
 import Token from '../token/token.model';
+
+// Services
+import { generateAuthTokens, verifyToken } from '../token/token.service';
+import { getUserByEmail, getUserById, updateUserById } from '../user/user.service';
+
+// Interfaces
 import ApiError from '../errors/ApiError';
 import tokenTypes from '../token/token.types';
-import { getUserByEmail, getUserById, updateUserById } from '../user/user.service';
-import { IUserDoc, IUserWithTokens } from '../user/user.interfaces';
-import { generateAuthTokens, verifyToken } from '../token/token.service';
+import type { IUserDoc, IUserWithTokens } from '../user/user.interfaces';
 
 /**
- * Login with username and password
- * @param {string} email
- * @param {string} password
- * @returns {Promise<IUserDoc>}
+ * Login with email and password
+ * @param {string} email - User's email address
+ * @param {string} password - User's password
+ * @returns {Promise<IUserDoc>} - Returns a promise that resolves to the user document
+ * @throws {ApiError} - Throws an error if the email or password is incorrect
  */
 export const loginUserWithEmailAndPassword = async (email: string, password: string): Promise<IUserDoc> => {
   const user = await getUserByEmail(email);
@@ -23,8 +31,9 @@ export const loginUserWithEmailAndPassword = async (email: string, password: str
 
 /**
  * Logout
- * @param {string} refreshToken
- * @returns {Promise<void>}
+ * @param {string} refreshToken - The refresh token to be invalidated
+ * @returns {Promise<void>} - Returns a promise that resolves when the token is invalidated
+ * @throws {ApiError} - Throws an error if the token is not found
  */
 export const logout = async (refreshToken: string): Promise<void> => {
   const refreshTokenDoc = await Token.findOne({ token: refreshToken, type: tokenTypes.REFRESH, blacklisted: false });
@@ -36,8 +45,9 @@ export const logout = async (refreshToken: string): Promise<void> => {
 
 /**
  * Refresh auth tokens
- * @param {string} refreshToken
- * @returns {Promise<IUserWithTokens>}
+ * @param {string} refreshToken - The refresh token to be verified and used for generating new tokens
+ * @returns {Promise<IUserWithTokens>} - Returns a promise that resolves to the user with new auth tokens
+ * @throws {ApiError} - Throws an error if the refresh token is invalid or the user is not found
  */
 export const refreshAuth = async (refreshToken: string): Promise<IUserWithTokens> => {
   try {
@@ -56,9 +66,10 @@ export const refreshAuth = async (refreshToken: string): Promise<IUserWithTokens
 
 /**
  * Reset password
- * @param {string} resetPasswordToken
- * @param {string} newPassword
- * @returns {Promise<void>}
+ * @param {string} resetPasswordToken - The token used to reset the password
+ * @param {string} newPassword - The new password to be set
+ * @returns {Promise<void>} - Returns a promise that resolves when the password is reset
+ * @throws {ApiError} - Throws an error if the token is invalid or the user is not found
  */
 export const resetPassword = async (resetPasswordToken: any, newPassword: string): Promise<void> => {
   try {
@@ -76,8 +87,9 @@ export const resetPassword = async (resetPasswordToken: any, newPassword: string
 
 /**
  * Verify email
- * @param {string} verifyEmailToken
- * @returns {Promise<IUserDoc | null>}
+ * @param {string} verifyEmailToken - The token used to verify the email
+ * @returns {Promise<IUserDoc | null>} - Returns a promise that resolves to the user document if verification is successful, or null if the user is not found
+ * @throws {ApiError} - Throws an error if the token is invalid or the user is not found
  */
 export const verifyEmail = async (verifyEmailToken: any): Promise<IUserDoc | null> => {
   try {

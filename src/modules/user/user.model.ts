@@ -1,10 +1,16 @@
 import mongoose from 'mongoose';
-import validator from 'validator';
+
+// Utils
 import bcrypt from 'bcryptjs';
+import validator from 'validator';
 import toJSON from '../toJSON/toJSON';
 import paginate from '../paginate/paginate';
+
+// Constants
 import { roles } from '../../config/roles';
-import { IUserDoc, IUserModel } from './user.interfaces';
+
+// Interfaces
+import type { IUserDoc, IUserModel } from './user.interfaces';
 
 const userSchema = new mongoose.Schema<IUserDoc, IUserModel>(
   {

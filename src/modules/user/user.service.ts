@@ -1,14 +1,19 @@
-import httpStatus from 'http-status';
+// Models
 import mongoose from 'mongoose';
 import User from './user.model';
+
+// Utils
+import httpStatus from 'http-status';
+
+// Interfaces
 import ApiError from '../errors/ApiError';
-import { IOptions, QueryResult } from '../paginate/paginate';
-import { NewCreatedUser, UpdateUserBody, IUserDoc, NewRegisteredUser } from './user.interfaces';
+import type { IOptions, QueryResult } from '../paginate/paginate';
+import type { NewCreatedUser, UpdateUserBody, IUserDoc, NewRegisteredUser } from './user.interfaces';
 
 /**
- * Create a user
- * @param {NewCreatedUser} userBody
- * @returns {Promise<IUserDoc>}
+ * Create a new user
+ * @param {NewCreatedUser} userBody - The user information to create
+ * @returns {Promise<IUserDoc>} - The created user document
  */
 export const createUser = async (userBody: NewCreatedUser): Promise<IUserDoc> => {
   if (await User.isEmailTaken(userBody.email)) {
@@ -18,9 +23,9 @@ export const createUser = async (userBody: NewCreatedUser): Promise<IUserDoc> =>
 };
 
 /**
- * Register a user
- * @param {NewRegisteredUser} userBody
- * @returns {Promise<IUserDoc>}
+ * Register a new user
+ * @param {NewRegisteredUser} userBody - The user information to register
+ * @returns {Promise<IUserDoc>} - The registered user document
  */
 export const registerUser = async (userBody: NewRegisteredUser): Promise<IUserDoc> => {
   if (await User.isEmailTaken(userBody.email)) {
@@ -31,9 +36,9 @@ export const registerUser = async (userBody: NewRegisteredUser): Promise<IUserDo
 
 /**
  * Query for users
- * @param {Object} filter - Mongo filter
- * @param {Object} options - Query options
- * @returns {Promise<QueryResult>}
+ * @param {Record<string, any>} filter - Mongo filter
+ * @param {IOptions} options - Query options
+ * @returns {Promise<QueryResult>} - The query result containing users
  */
 export const queryUsers = async (filter: Record<string, any>, options: IOptions): Promise<QueryResult> => {
   const users = await User.paginate(filter, options);
@@ -42,23 +47,23 @@ export const queryUsers = async (filter: Record<string, any>, options: IOptions)
 
 /**
  * Get user by id
- * @param {mongoose.Types.ObjectId} id
- * @returns {Promise<IUserDoc | null>}
+ * @param {mongoose.Types.ObjectId} id - The id of the user
+ * @returns {Promise<IUserDoc | null>} - The user document or null if not found
  */
 export const getUserById = async (id: mongoose.Types.ObjectId): Promise<IUserDoc | null> => User.findById(id);
 
 /**
  * Get user by email
- * @param {string} email
- * @returns {Promise<IUserDoc | null>}
+ * @param {string} email - The email of the user
+ * @returns {Promise<IUserDoc | null>} - The user document or null if not found
  */
 export const getUserByEmail = async (email: string): Promise<IUserDoc | null> => User.findOne({ email });
 
 /**
  * Update user by id
- * @param {mongoose.Types.ObjectId} userId
- * @param {UpdateUserBody} updateBody
- * @returns {Promise<IUserDoc | null>}
+ * @param {mongoose.Types.ObjectId} userId - The id of the user to update
+ * @param {UpdateUserBody} updateBody - The new user data to update
+ * @returns {Promise<IUserDoc | null>} - The updated user document or null if not found
  */
 export const updateUserById = async (
   userId: mongoose.Types.ObjectId,
@@ -78,8 +83,8 @@ export const updateUserById = async (
 
 /**
  * Delete user by id
- * @param {mongoose.Types.ObjectId} userId
- * @returns {Promise<IUserDoc | null>}
+ * @param {mongoose.Types.ObjectId} userId - The id of the user to delete
+ * @returns {Promise<IUserDoc | null>} - The deleted user document or null if not found
  */
 export const deleteUserById = async (userId: mongoose.Types.ObjectId): Promise<IUserDoc | null> => {
   const user = await getUserById(userId);

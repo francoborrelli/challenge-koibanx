@@ -1,12 +1,19 @@
 import mongoose from 'mongoose';
-import httpStatus from 'http-status';
-import httpMocks from 'node-mocks-http';
-import winston from 'winston';
-import { errorConverter, errorHandler } from './error';
-import ApiError from './ApiError';
-import config from '../../config/config';
-import logger from '../logger/logger';
 
+// Utils
+import winston from 'winston';
+import httpStatus from 'http-status';
+import logger from '../logger/logger';
+import httpMocks from 'node-mocks-http';
+import { errorConverter, errorHandler } from './error';
+
+// Interfaces
+import ApiError from './ApiError';
+
+// Config
+import config from '../../config/config';
+
+// Jest
 import { beforeEach, describe, expect, jest, test } from '@jest/globals';
 
 describe('Error middlewares', () => {

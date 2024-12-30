@@ -1,5 +1,5 @@
 import { Model, Document } from 'mongoose';
-import { QueryResult, IOptions } from './paginate';
+import type { QueryResult, IOptions } from './paginate';
 
 export interface IProject {
   name: string;

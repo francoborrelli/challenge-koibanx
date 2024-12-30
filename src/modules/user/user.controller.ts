@@ -1,11 +1,17 @@
-import httpStatus from 'http-status';
-import { Request, Response } from 'express';
 import mongoose from 'mongoose';
-import catchAsync from '../../utils/catchAsync';
 import ApiError from '../errors/ApiError';
+import catchAsync from '../../utils/catchAsync';
+
+// Utils
 import pick from '../../utils/pick';
-import { IOptions } from '../paginate/paginate';
+import httpStatus from 'http-status';
+
+// Services
 import * as userService from './user.service';
+
+// Interfaces
+import type { Request, Response } from 'express';
+import type { IOptions } from '../paginate/paginate';
 
 export const createUser = catchAsync(async (req: Request, res: Response) => {
   const user = await userService.createUser(req.body);

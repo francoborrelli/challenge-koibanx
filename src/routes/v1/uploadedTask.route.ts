@@ -1,8 +1,9 @@
 import express, { Router } from 'express';
 
-// Utils
+// Middlewares
 import { upload } from '../../utils/multer';
 import { validate } from '../../validations';
+
 import { uploadedTaskValidation, uploadedTaskController } from '../../modules/uploadedTask';
 
 const router: Router = express.Router();
@@ -14,11 +15,8 @@ router.post(
   validate(uploadedTaskValidation.createValidation),
   uploadedTaskController.createTask
 );
-
 router.get('/:taskId/status', validate(uploadedTaskValidation.statusValidation), uploadedTaskController.getTaskStatus);
-
 router.get('/:taskId/data', validate(uploadedTaskValidation.dataErrorsValidation), uploadedTaskController.getTaskData);
-
 router.get(
   '/:taskId/errors',
   validate(uploadedTaskValidation.dataErrorsValidation),

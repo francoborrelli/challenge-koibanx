@@ -1,6 +1,11 @@
-import { faker } from '@faker-js/faker';
-import { NewCreatedUser } from './user.interfaces';
+// Model
 import User from './user.model';
+
+// Interfaces
+import type { NewCreatedUser } from './user.interfaces';
+
+// Tests related
+import { faker } from '@faker-js/faker';
 import { beforeEach, describe, expect, test } from '@jest/globals';
 
 describe('User model', () => {

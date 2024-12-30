@@ -1,6 +1,8 @@
 import Joi from 'joi';
-import { NewCreatedUser } from './user.interfaces';
 import { password, objectId } from '../../validations/custom.validation';
+
+// Interfaces
+import type { NewCreatedUser } from './user.interfaces';
 
 const createUserBody: Record<keyof NewCreatedUser, any> = {
   email: Joi.string().required().email(),

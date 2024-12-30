@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { Schema, Document, Model } from 'mongoose';
+import { Schema, Document } from 'mongoose';
 
 export interface QueryResult {
   results: Document[];
@@ -9,11 +9,38 @@ export interface QueryResult {
   totalResults: number;
 }
 
+/**
+ * Interface representing pagination options.
+ */
 export interface IOptions {
+  /**
+   * Specifies the field by which to sort the results.
+   * @description The field name to sort by.
+   */
   sortBy?: string;
+
+  /**
+   * Specifies the fields to include or exclude in the results.
+   * @description The field names to project.
+   */
   projectBy?: string;
+
+  /**
+   * Specifies the related documents to include in the results.
+   * @description The field names to populate.
+   */
   populate?: string;
+
+  /**
+   * Specifies the maximum number of results per page.
+   * @description The limit of results per page.
+   */
   limit?: number;
+
+  /**
+   * Specifies the page number to retrieve.
+   * @description The page number to fetch.
+   */
   page?: number;
 }
 

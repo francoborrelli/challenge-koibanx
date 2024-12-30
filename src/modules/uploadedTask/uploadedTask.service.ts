@@ -7,6 +7,7 @@ import UploadTask, { UploadTaskData, UploadTaskError } from './uploadedTask.mode
 
 // Interfaces
 import { ApiError } from '../errors';
+import type { QueryResult } from '../paginate/paginate';
 import type { IUploadTaskErrorDoc, NewIUploadTaskError } from './uploadedTask.interfaces';
 import type { IUploadTaskDataDoc, NewIUploadTaskDataItem } from './uploadedTask.interfaces';
 import type { IUploadTaskDoc, NewIUploadTaskDocData, UploadStatus } from './uploadedTask.interfaces';
@@ -82,24 +83,14 @@ export const createTaskData = async (
  * @param {mongoose.Types.ObjectId} taskId - The ID of the task to retrieve data for
  * @param {number} page - The page number for pagination
  * @param {number} limit - The number of items per page
- * @returns {Promise<{ data: IUploadTaskDataDoc[], total: number }>} - The list of data and total count
  */
-export const getTaskData = async (
-  taskId: mongoose.Types.ObjectId,
-  page: number,
-  limit: number
-): Promise<{ data: IUploadTaskDataDoc['data'][]; total: number; page: number; limit: number }> => {
+export const getTaskData = async (taskId: mongoose.Types.ObjectId, page: number, limit: number) => {
   const task = await UploadTask.findById(taskId);
   if (!task) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
   }
-
-  const skip = (page - 1) * limit;
-  const [data, total] = await Promise.all([
-    UploadTaskData.find({ uploadTask: taskId }, 'data -_id').skip(skip).limit(limit),
-    UploadTaskData.countDocuments({ uploadTask: taskId }),
-  ]);
-  return { data: data.map((a) => a.data), total, page, limit };
+  const data = await UploadTaskData.paginate({ uploadTask: taskId }, { page, limit, projectBy: 'data -_id' });
+  return { ...data, results: data.results.map((a) => (a as IUploadTaskDataDoc).data) };
 };
 
 /*************************************************
@@ -132,19 +123,10 @@ export const getTaskErrors = async (
   taskId: mongoose.Types.ObjectId,
   page: number,
   limit: number
-): Promise<{ errors: IUploadTaskErrorDoc[]; total: number; page: number; limit: number }> => {
+): Promise<QueryResult> => {
   const task = await UploadTask.findById(taskId);
   if (!task) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
   }
-
-  const skip = (page - 1) * limit;
-  const [errors, total] = await Promise.all([
-    UploadTaskError.find({ uploadTask: taskId }, 'row column message -_id')
-      .sort({ row: 1, column: 1 })
-      .skip(skip)
-      .limit(limit),
-    UploadTaskError.countDocuments({ uploadTask: taskId }),
-  ]);
-  return { errors, total, page, limit };
+  return UploadTaskError.paginate({ uploadTask: taskId }, { page, limit, projectBy: 'row column message -_id' });
 };

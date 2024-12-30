@@ -1,4 +1,7 @@
-import type { Document } from 'mongoose';
+import mongoose from 'mongoose';
+
+import type { Document, Model } from 'mongoose';
+import type { IOptions, QueryResult } from '../paginate/paginate';
 
 /*************************************************
  *
@@ -33,6 +36,10 @@ export interface IUploadTaskDoc extends Document {
   getInitial(): { _id: string; status: string; createdAt: Date; mappings: Record<string, MappingTypes> };
 }
 
+export interface IUploadTaskModel extends Model<IUploadTaskDoc> {
+  paginate(filter: Record<string, any>, options: IOptions): Promise<QueryResult>;
+}
+
 export type NewIUploadTaskDocData = Pick<IUploadTaskDoc, 'filename' | 'filepath' | 'formatter'>;
 
 /*************************************************
@@ -42,8 +49,12 @@ export type NewIUploadTaskDocData = Pick<IUploadTaskDoc, 'filename' | 'filepath'
  ************************************************/
 
 export interface IUploadTaskDataDoc extends Document {
-  uploadTask: string;
+  uploadTask: mongoose.Schema.Types.ObjectId;
   data: Record<string, any>;
+}
+
+export interface IUploadTaskDataModel extends Model<IUploadTaskDataDoc> {
+  paginate(filter: Record<string, any>, options: IOptions): Promise<QueryResult>;
 }
 
 export type NewIUploadTaskDataItem = IUploadTaskDataDoc['data'];
@@ -55,10 +66,14 @@ export type NewIUploadTaskDataItem = IUploadTaskDataDoc['data'];
  ************************************************/
 
 export interface IUploadTaskErrorDoc extends Document {
-  uploadTask: string;
+  uploadTask: mongoose.Schema.Types.ObjectId;
   row: number;
   column: number;
   message?: string;
+}
+
+export interface IUploadTaskErrorModel extends Model<IUploadTaskErrorDoc> {
+  paginate(filter: Record<string, any>, options: IOptions): Promise<QueryResult>;
 }
 
 export type NewIUploadTaskError = Pick<IUploadTaskErrorDoc, 'row' | 'column' | 'message'>;

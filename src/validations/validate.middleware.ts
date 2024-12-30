@@ -1,9 +1,22 @@
-import { Request, Response, NextFunction } from 'express';
+// Utils
 import Joi from 'joi';
-import httpStatus from 'http-status';
 import pick from '../utils/pick';
-import ApiError from '../modules/errors/ApiError';
+import httpStatus from 'http-status';
 
+// Interfaces
+import ApiError from '../modules/errors/ApiError';
+import type { Request, Response, NextFunction } from 'express';
+
+/**
+ * Middleware to validate request objects against a given Joi schema.
+ *
+ * @param {Record<string, any>} schema - The Joi schema to validate against. Should contain keys like 'params', 'query', and 'body'.
+ * @returns {(req: Request, _res: Response, next: NextFunction) => void} Middleware function that validates the request.
+ *
+ * The middleware picks the relevant parts of the request (params, query, body) and validates them against the provided schema.
+ * If validation fails, it passes an ApiError to the next middleware with a BAD_REQUEST status and the validation error messages.
+ * If validation succeeds, it assigns the validated values back to the request object and calls the next middleware.
+ */
 const validate =
   (schema: Record<string, any>) =>
   (req: Request, _res: Response, next: NextFunction): void => {

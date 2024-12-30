@@ -1,7 +1,11 @@
 import mongoose from 'mongoose';
 
+// Utils
+import paginate from '../paginate/paginate';
+
 // Interfaces
 import type { IUploadTaskDoc, IUploadTaskDataDoc, IUploadTaskErrorDoc } from './uploadedTask.interfaces';
+import type { IUploadTaskModel, IUploadTaskDataModel, IUploadTaskErrorModel } from './uploadedTask.interfaces';
 
 /*************************************************
  *
@@ -22,7 +26,7 @@ import type { IUploadTaskDoc, IUploadTaskDataDoc, IUploadTaskErrorDoc } from './
  * @property {Date} createdAt - The date when the upload task was created. This field is automatically managed by Mongoose.
  * @property {Date} updatedAt - The date when the upload task was last updated. This field is automatically managed by Mongoose.
  */
-const uploadTaskSchema = new mongoose.Schema<IUploadTaskDoc>(
+const uploadTaskSchema = new mongoose.Schema<IUploadTaskDoc, IUploadTaskModel>(
   {
     status: {
       type: String,
@@ -61,9 +65,10 @@ uploadTaskSchema.methods.getInitial = function () {
   };
 };
 
+uploadTaskSchema.plugin(paginate);
 uploadTaskSchema.index({ status: 1 });
 
-const UploadTask = mongoose.model<IUploadTaskDoc & mongoose.Document>('UploadTask', uploadTaskSchema);
+const UploadTask = mongoose.model<IUploadTaskDoc, IUploadTaskModel>('UploadTask', uploadTaskSchema);
 
 /*************************************************
  *
@@ -71,7 +76,7 @@ const UploadTask = mongoose.model<IUploadTaskDoc & mongoose.Document>('UploadTas
  *
  ************************************************/
 
-const uploadTaskDataSchema = new mongoose.Schema({
+const uploadTaskDataSchema = new mongoose.Schema<IUploadTaskDataDoc, IUploadTaskDataModel>({
   uploadTask: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'UploadTask',
@@ -84,8 +89,10 @@ const uploadTaskDataSchema = new mongoose.Schema({
   },
 });
 
-const UploadTaskData = mongoose.model<IUploadTaskDataDoc & mongoose.Document>('UploadTaskData', uploadTaskDataSchema);
+uploadTaskDataSchema.plugin(paginate);
 uploadTaskDataSchema.index({ uploadTask: 1 });
+
+const UploadTaskData = mongoose.model<IUploadTaskDataDoc, IUploadTaskDataModel>('UploadTaskData', uploadTaskDataSchema);
 
 /*************************************************
  *
@@ -93,7 +100,7 @@ uploadTaskDataSchema.index({ uploadTask: 1 });
  *
  ************************************************/
 
-const uploadTaskErrorSchema = new mongoose.Schema({
+const uploadTaskErrorSchema = new mongoose.Schema<IUploadTaskErrorDoc, IUploadTaskErrorModel>({
   uploadTask: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'UploadTask',
@@ -113,12 +120,13 @@ const uploadTaskErrorSchema = new mongoose.Schema({
   },
 });
 
-const UploadTaskError = mongoose.model<IUploadTaskErrorDoc & mongoose.Document>(
+uploadTaskErrorSchema.plugin(paginate);
+uploadTaskErrorSchema.index({ uploadTask: 1, row: 1, column: 1 });
+
+const UploadTaskError = mongoose.model<IUploadTaskErrorDoc, IUploadTaskErrorModel>(
   'UploadTaskError',
   uploadTaskErrorSchema
 );
-
-uploadTaskErrorSchema.index({ uploadTask: 1, row: 1, column: 1 });
 
 export { UploadTaskData, UploadTaskError };
 export default UploadTask;
