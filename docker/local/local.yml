@@ -1,24 +1,34 @@
+x-app-properties: &app-properties
+  build:
+    context: ../../
+    dockerfile: ./docker/local/Dockerfile
+  restart: unless-stopped
+  env_file:
+    - ../../.envs/.local/.api
+  volumes:
+    - ../../src:/app/src
+    - uploads_data:/app/uploads
+  depends_on:
+    - mongodb
+    - redis
+  networks:
+    - backend
+
 services:
   app:
+    <<: *app-properties
     container_name: challenge-koibanx-app
-    build:
-      context: ../../
-      dockerfile: ./docker/local/Dockerfile
     command: yarn run dev
-    restart: always
-    env_file:
-      - ../../.envs/.local/.api
-    volumes:
-      - ../../src:/app/src
-      - uploads_data:/app/uploads
     ports:
       - '3000:3000'
-    links:
-      - mongodb
-    depends_on:
-      - mongodb
-    networks:
-      - backend
+
+  worker:
+    <<: *app-properties
+    command: yarn run worker
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
 
   mongodb:
     container_name: challenge-koibanx-mongodb

@@ -91,8 +91,6 @@ const mapExcelRow = (value: ExcelJS.CellValue, type: MappingTypes, optional: boo
  * @returns {Promise<void>} A promise that resolves when the task processing is complete.
  */
 export const processTask = async (id: string): Promise<void> => {
-  console.log('Processing task with id:', id);
-
   const task = await taskService.getTaskById(new mongoose.Types.ObjectId(id));
 
   if (!task) {
@@ -101,7 +99,6 @@ export const processTask = async (id: string): Promise<void> => {
 
   // Do some processing here
   const file = task.filepath;
-  console.log('Processing file:', file);
   const filePath = path.resolve(file);
 
   const errors: {
@@ -146,7 +143,6 @@ export const processTask = async (id: string): Promise<void> => {
         const optional = columnName.endsWith('?');
 
         try {
-          console.log({ rowIndex, colIndex, value });
           mappedRow[columnName] = mapExcelRow(value, mappedKey, optional);
         } catch (error: any) {
           errors.push({

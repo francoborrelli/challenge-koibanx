@@ -3,7 +3,9 @@ import mongoose from 'mongoose';
 // Utils
 import httpStatus from 'http-status';
 import { catchAsync } from '../../utils';
-import { processTask } from './uploadedTask.utils';
+
+// Queue
+import { uploadedTaskQueue } from './uploadedTask.queue';
 
 // Services
 import * as taskService from './uploadedTask.service';
@@ -34,13 +36,14 @@ export const createTask = catchAsync(async (req: Request, res: Response) => {
   const { file, body } = req;
 
   if (!file) return res.status(httpStatus.BAD_REQUEST).send('No file uploaded');
-  const { filename, path: filepath } = file;
 
   const { formatter } = body;
-
+  const { filename, path: filepath } = file;
+  // Create a new task
   const task = await taskService.createTask({ filename, filepath, formatter });
 
-  await processTask(task._id as string);
+  // Add the task to the queue
+  await uploadedTaskQueue.add(`task upload`, { jobData: { id: task.id } });
 
   res.status(httpStatus.CREATED).send(task.getInitial());
 });
