@@ -1,0 +1,33 @@
+# Port number
+PORT=3000
+
+# URL of the Mongo DB
+MONGODB_URL=mongodb://root:example@mongodb:27017/challenge?authSource=admin
+
+# URL of Redis
+REDIS_URL=redis://redis:6379
+
+# Path to the uploads folder
+FILES_UPLOAD_PATH=/app/uploads
+
+# Cookie configs
+COOKIE_SECRET=G7hJkL9mN2pQwX3z
+
+# JWT secret key
+JWT_SECRET=J7hJkL9mN2pQwX3z
+
+# Number of minutes after which an access token expires
+JWT_ACCESS_EXPIRATION_MINUTES=5
+
+# Number of days after which a refresh token expires
+JWT_REFRESH_EXPIRATION_DAYS=30
+
+# Number of minutes after which a reset password token expires
+JWT_RESET_PASSWORD_EXPIRATION_MINUTES=10
+
+# Number of minutes after which a verify email token expires
+JWT_VERIFY_EMAIL_EXPIRATION_MINUTES=10
+
+
+
+

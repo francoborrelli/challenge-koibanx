@@ -1,0 +1,60 @@
+x-app-properties: &app-properties
+  build:
+    context: ../../
+    dockerfile: ./docker/production/Dockerfile
+  restart: unless-stopped
+  env_file:
+    - ../../.envs/.production/.api
+  volumes:
+    - uploads_data:/app/uploads
+  depends_on:
+    - mongodb
+    - redis
+  networks:
+    - backend
+
+services:
+  app:
+    <<: *app-properties
+    container_name: challenge-koibanx-app-prod
+    command: yarn start
+    ports:
+      - '3000:3000'
+
+  worker:
+    <<: *app-properties
+    command: yarn run worker
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+  mongodb:
+    container_name: challenge-koibanx-mongodb-prod
+    image: mongo:7.0.16
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+      - MONGO_INITDB_DATABASE=challenge
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - backend
+
+  redis:
+    container_name: challenge-koibanx-redis-prod
+    image: redis:7.0.10-alpine
+    restart: unless-stopped
+    networks:
+      - backend
+
+volumes:
+  mongo_data:
+  uploads_data:
+
+networks:
+  backend:
+    driver: bridge
