@@ -1,6 +1,9 @@
 import express, { Router } from 'express';
 
+import { Permissions } from '../../config/roles';
+
 // Middlewares
+import { auth } from '../../modules/auth';
 import { upload } from '../../utils/multer';
 import { validate } from '../../validations';
 
@@ -8,17 +11,32 @@ import { uploadedTaskValidation, uploadedTaskController } from '../../modules/up
 
 const router: Router = express.Router();
 
-router.get('/formatters', uploadedTaskController.getFormatters);
+router.get('/formatters', auth(), uploadedTaskController.getFormatters);
 router.post(
   '/',
+  auth(Permissions.uploadTask),
   upload.single('file'),
   validate(uploadedTaskValidation.createValidation),
   uploadedTaskController.createTask
 );
-router.get('/:taskId/status', validate(uploadedTaskValidation.statusValidation), uploadedTaskController.getTaskStatus);
-router.get('/:taskId/data', validate(uploadedTaskValidation.dataErrorsValidation), uploadedTaskController.getTaskData);
+
+router.get(
+  '/:taskId/status',
+  auth(Permissions.getTask),
+  validate(uploadedTaskValidation.statusValidation),
+  uploadedTaskController.getTaskStatus
+);
+
+router.get(
+  '/:taskId/data',
+  auth(Permissions.getTasksData),
+  validate(uploadedTaskValidation.dataErrorsValidation),
+  uploadedTaskController.getTaskData
+);
+
 router.get(
   '/:taskId/errors',
+  auth(Permissions.getTaskErrors),
   validate(uploadedTaskValidation.dataErrorsValidation),
   uploadedTaskController.getTaskErrors
 );
