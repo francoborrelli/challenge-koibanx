@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 // Utils
 import httpStatus from 'http-status';
-import { catchAsync } from 'src/utils';
+import { catchAsync } from '../../utils';
 import { processTask } from './uploadedTask.utils';
 
 // Services
@@ -12,7 +12,6 @@ import * as taskService from './uploadedTask.service';
 import { AVAILABLE_FORTATTERS } from './uploadedTask.constants';
 
 // Interfaces
-import { ApiError } from '../errors';
 import type { Request, Response } from 'express';
 
 /*************************************************
