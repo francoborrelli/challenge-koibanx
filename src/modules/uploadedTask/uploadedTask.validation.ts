@@ -21,6 +21,8 @@ export const formattedDataValidation = Joi.object({
   query: Joi.object().keys({
     page: Joi.number().min(1).optional(),
     limit: Joi.number().min(1).optional(),
+    row: Joi.number().optional(),
+    column: Joi.number().optional(),
   }),
   params: Joi.object().keys({
     taskId: Joi.string().required(),
@@ -31,6 +33,8 @@ export const dataErrorsValidation = Joi.object({
   query: Joi.object().keys({
     page: Joi.number().min(1).optional(),
     limit: Joi.number().min(1).optional(),
+    row: Joi.number().optional(),
+    column: Joi.number().optional(),
   }),
   params: Joi.object().keys({
     taskId: Joi.string().required(),

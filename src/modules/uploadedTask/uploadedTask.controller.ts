@@ -99,9 +99,13 @@ export const getFormatters = catchAsync(async (req: Request, res: Response) => {
  * @throws {ApiError} If the task is not found, an ApiError with a 404 status code is thrown.
  */
 export const getTaskData = catchAsync(async (req: Request, res: Response) => {
+  const { row, column } = req.query;
+
   const page = req.query.page ? parseInt(req.query.page as string) : 1;
   const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-  const data = await taskService.getTaskData(new mongoose.Types.ObjectId(req.params['taskId']), page, limit);
+
+  const options = { page, limit, row, column };
+  const data = await taskService.getTaskData(new mongoose.Types.ObjectId(req.params['taskId']), options);
   res.send(data);
 });
 
@@ -123,8 +127,13 @@ export const getTaskData = catchAsync(async (req: Request, res: Response) => {
  * @throws {ApiError} If the task is not found, an ApiError with a 404 status code is thrown.
  */
 export const getTaskErrors = catchAsync(async (req: Request, res: Response) => {
+  const { row, column } = req.query;
+
   const page = req.query.page ? parseInt(req.query.page as string) : 1;
   const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
-  const errors = await taskService.getTaskErrors(new mongoose.Types.ObjectId(req.params['taskId']), page, limit);
+
+  const options = { page, limit, row, column };
+
+  const errors = await taskService.getTaskErrors(new mongoose.Types.ObjectId(req.params['taskId']), options);
   res.send(errors);
 });

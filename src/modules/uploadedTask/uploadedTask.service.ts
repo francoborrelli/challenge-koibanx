@@ -12,6 +12,14 @@ import type { IUploadTaskErrorDoc, NewIUploadTaskError } from './uploadedTask.in
 import type { IUploadTaskDataDoc, NewIUploadTaskDataItem } from './uploadedTask.interfaces';
 import type { IUploadTaskDoc, NewIUploadTaskDocData, UploadStatus } from './uploadedTask.interfaces';
 
+interface PaginateOptions {
+  page?: number;
+  limit?: number;
+
+  row?: number | string | any;
+  column?: number | string | any;
+}
+
 /*************************************************
  *
  *            UPLOAD TASK RELATED
@@ -83,13 +91,22 @@ export const createTaskData = async (
  * @param {mongoose.Types.ObjectId} taskId - The ID of the task to retrieve data for
  * @param {number} page - The page number for pagination
  * @param {number} limit - The number of items per page
+ * @param {number} row - The row number to filter by
+ * @param {number} column - The column number to filter by
  */
-export const getTaskData = async (taskId: mongoose.Types.ObjectId, page: number, limit: number) => {
+export const getTaskData = async (taskId: mongoose.Types.ObjectId, options: PaginateOptions) => {
   const task = await UploadTask.findById(taskId);
   if (!task) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
   }
-  const data = await UploadTaskData.paginate({ uploadTask: taskId }, { page, limit, projectBy: 'data -_id' });
+  const { page, limit, row, column } = options;
+
+  const filters: Record<string, any> = { uploadTask: taskId };
+  if (row) filters['row'] = row;
+  if (column) filters['column'] = column;
+
+  const data = await UploadTaskData.paginate(filters, { page, limit, projectBy: 'data -_id' });
+
   return { ...data, results: data.results.map((a) => (a as IUploadTaskDataDoc).data) };
 };
 
@@ -117,16 +134,24 @@ export const createTaskErrors = async (
  * @param {mongoose.Types.ObjectId} taskId - The ID of the task to retrieve errors for
  * @param {number} page - The page number for pagination
  * @param {number} limit - The number of items per page
+ * @param {number} row - The row number to filter by
+ * @param {number} column - The column number to filter by
  * @returns {Promise<{ errors: IUploadTaskErrorDoc[], total: number }>} - The list of errors and total count
  */
 export const getTaskErrors = async (
   taskId: mongoose.Types.ObjectId,
-  page: number,
-  limit: number
+  options: PaginateOptions
 ): Promise<QueryResult> => {
   const task = await UploadTask.findById(taskId);
   if (!task) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Task not found');
   }
-  return UploadTaskError.paginate({ uploadTask: taskId }, { page, limit, projectBy: 'row column message -_id' });
+
+  const { page, limit, row, column } = options;
+
+  const filters: Record<string, any> = { uploadTask: taskId };
+  if (row) filters['row'] = row;
+  if (column) filters['column'] = column;
+
+  return UploadTaskError.paginate(filters, { page, limit, projectBy: 'row column message -_id' });
 };

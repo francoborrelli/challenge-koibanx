@@ -47,7 +47,7 @@ services:
 
   redis:
     container_name: challenge-koibanx-redis
-    image: redis:7.0.10
+    image: redis:7.0.10-alpine
     restart: unless-stopped
     networks:
       - backend

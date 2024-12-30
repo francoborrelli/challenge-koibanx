@@ -152,6 +152,20 @@ export default router;
  *           minimum: 1
  *           default: 1
  *         description: Page number
+ *       - in: query
+ *         name: row
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Row number
+ *       - in: query
+ *         name: column
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Column number
  *     responses:
  *       200:
  *         description: The data of the uploaded task
@@ -192,6 +206,20 @@ export default router;
  *           minimum: 1
  *           default: 1
  *         description: Page number
+ *       - in: query
+ *         name: row
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Row number
+ *       - in: query
+ *         name: column
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Column number
  *     responses:
  *       200:
  *         description: The errors of the uploaded task
