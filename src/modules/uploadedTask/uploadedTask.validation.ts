@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { objectId } from '../../validations';
 
 // Constants
 import { AVAILABLE_FORTATTERS } from './uploadedTask.constants';
@@ -13,7 +14,7 @@ export const createValidation = Joi.object({
 
 export const statusValidation = Joi.object({
   params: Joi.object().keys({
-    taskId: Joi.string().required(),
+    taskId: Joi.required().custom(objectId),
   }),
 });
 
@@ -24,8 +25,9 @@ export const formattedDataValidation = Joi.object({
     row: Joi.number().optional(),
     column: Joi.number().optional(),
   }),
+
   params: Joi.object().keys({
-    taskId: Joi.string().required(),
+    taskId: Joi.required().custom(objectId),
   }),
 });
 
@@ -37,6 +39,6 @@ export const dataErrorsValidation = Joi.object({
     column: Joi.number().optional(),
   }),
   params: Joi.object().keys({
-    taskId: Joi.string().required(),
+    taskId: Joi.required().custom(objectId),
   }),
 });

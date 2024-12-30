@@ -5,6 +5,7 @@ import config from '../config/config';
 
 // Jest
 import { beforeAll, beforeEach, afterAll } from '@jest/globals';
+import { uploadedTaskQueue } from '../modules/uploadedTask/uploadedTask.queue';
 
 /**
  * Sets up the test database for use in Jest tests.
@@ -30,6 +31,7 @@ const setupTestDB = () => {
 
   afterAll(async () => {
     await mongoose.disconnect();
+    await uploadedTaskQueue.disconnect();
   });
 };
 

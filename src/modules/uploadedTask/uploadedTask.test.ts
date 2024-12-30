@@ -1,79 +1,162 @@
-// import app from '../../app';
+import app from '../../app';
 
-// // Model
-// import UploadTask from './uploadedTask.model';
+// Model
+import { User } from '../user';
+import mongoose from 'mongoose';
+import UploadTask from './uploadedTask.model';
 
-// // Tests related
-// import request from 'supertest';
-// import { beforeEach, describe, expect, it } from '@jest/globals';
+// Config
+import config from '../../config/config';
 
-// describe('UploadedTask Routes', () => {
-//   beforeEach(() => {
-//     UploadTask.create({
-//       _id: '609c72ef6b64fdb1a6c81302',
-//       filename: 'testfile.xlsx',
-//       filepath: 'uploads/testfile.xlsx',
-//       formatter: '0',
-//       status: 'processing',
-//     });
-//   });
+// Utils
+import dayjs from 'dayjs';
+import bcrypt from 'bcryptjs';
 
-//   describe('POST /tasks', () => {
-//     it('should create a task and return an ID when a file is uploaded', async () => {
-//       const file = Buffer.from('fake file content'); // Puedes usar un archivo real en lugar de Buffer
+// Tests related
+import request from 'supertest';
+import { faker } from '@faker-js/faker';
+import setupTestDB from '../../jest/setupTestDB';
+import { describe, expect, it, beforeAll } from '@jest/globals';
 
-//       const response = await request(app)
-//         .post('/tasks')
-//         .attach('file', file, 'testfile.xlsx') // Asegúrate de tener un archivo de prueba
-//         .field('formatter', 'excel') // Enviar el formato como parte del body
-//         .expect(201); // Código de éxito para creación
+// Interfaces
+import { tokenService, tokenTypes } from '../token';
 
-//       expect(response.body).toHaveProperty('_id');
-//       expect(response.body).toHaveProperty('filename', 'testfile.xlsx');
-//     });
+setupTestDB();
 
-//     it('should return BAD_REQUEST if no file is uploaded', async () => {
-//       const response = await request(app).post('/tasks').expect(400);
+const password = 'password1';
+const salt = bcrypt.genSaltSync(8);
+const hashedPassword = bcrypt.hashSync(password, salt);
+const accessTokenExpires = dayjs().add(config.jwt.accessExpirationMinutes, 'minutes');
 
-//       expect(response.text).toBe('No file uploaded');
-//     });
-//   });
+const admin = {
+  _id: new mongoose.Types.ObjectId(),
+  name: faker.person.fullName(),
+  email: faker.internet.email().toLowerCase(),
+  password,
+  role: 'admin',
+  isEmailVerified: false,
+};
 
-//   describe('GET /tasks/:taskId/status', () => {
-//     it('should return the status of the task', async () => {
-//       const taskId = '609c72ef6b64fdb1a6c81302';
+const task = {
+  _id: new mongoose.Types.ObjectId(),
+  filename: 'testfile.xlsx',
+  filepath: 'uploads/testfile.xlsx',
+  formatter: 0,
+  status: 'processing',
+};
 
-//       const response = await request(app).get(`/tasks/${taskId}/status`).expect(200);
-//       expect(response.body).toHaveProperty('status');
-//       expect(response.body.status).toBeDefined();
-//     });
+const insertUsers = async (users: Record<string, any>[]) => {
+  await User.insertMany(users.map((user) => ({ ...user, password: hashedPassword })));
+};
 
-//     it('should return 404 if task is not found', async () => {
-//       const taskId = 'invalidtaskid';
-//       const response = await request(app).get(`/tasks/${taskId}/status`).expect(404);
-//       expect(response.text).toBe('Task not found');
-//     });
-//   });
+const insertTask = async (tasks: Record<string, any>[]) => {
+  await UploadTask.insertMany(tasks);
+};
 
-//   describe('GET /tasks/:taskId/data', () => {
-//     it('should return task data with pagination', async () => {
-//       const taskId = '609c72ef6b64fdb1a6c81302'; // Usa un ID de tarea válido
+const adminAccessToken = tokenService.generateToken(admin._id, accessTokenExpires, tokenTypes.ACCESS);
 
-//       const response = await request(app).get(`/tasks/${taskId}/data`).query({ page: 1, limit: 10 }).expect(200);
+describe('UploadedTask Routes', () => {
+  beforeAll(() => {});
 
-//       expect(Array.isArray(response.body)).toBe(true);
-//       expect(response.body.length).toBeLessThanOrEqual(10);
-//     });
+  describe('POST /v1/tasks', () => {
+    it('should create a task and return an ID when a file is uploaded', async () => {
+      await insertUsers([admin]);
+      const file = Buffer.from('fake file content'); // Puedes usar un archivo real en lugar de Buffer
 
-//     it('should return an empty array if no data is found', async () => {
-//       const taskId = '609c72ef6b64fdb1a6c81302'; // Usa un ID de tarea válido
+      const response = await request(app)
+        .post('/v1/tasks')
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .attach('file', file, 'testfile.xlsx') // Asegúrate de tener un archivo de prueba
+        .field('formatter', 1) // Enviar el formato como parte del body
+        .expect(201); // Código de éxito para creación
 
-//       const response = await request(app)
-//         .get(`/tasks/${taskId}/data`)
-//         .query({ page: 999, limit: 10 }) // Página alta sin datos
-//         .expect(200);
+      expect(response.body).toHaveProperty('_id');
+      expect(response.body).toHaveProperty('createdAt');
+      expect(response.body).toHaveProperty('formatter', 1);
+      expect(response.body).toHaveProperty('status', 'pending');
+    });
 
-//       expect(response.body).toEqual([]);
-//     });
-//   });
-// });
+    it('should return BAD_REQUEST if no file is uploaded', async () => {
+      await insertUsers([admin]);
+      const response = await request(app)
+        .post('/v1/tasks')
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .expect(400);
+
+      expect(response.text).toBe('No file uploaded');
+    });
+
+    it('should return UNAUTHORIZED if no bearer token is provided', async () => {
+      const file = Buffer.from('fake file content');
+      await request(app).post('/v1/tasks').attach('file', file, 'testfile.xlsx').field('formatter', 1).expect(401);
+    });
+  });
+
+  describe('GET /v1/tasks/:taskId/status', () => {
+    it('should return the status of the task', async () => {
+      await Promise.all([insertUsers([admin]), insertTask([task])]);
+      const taskId = task._id;
+
+      const response = await request(app)
+        .get(`/v1/tasks/${taskId}/status`)
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .expect(200);
+
+      expect(['processing', 'done', 'pending']).toContain(response.body.status);
+    });
+
+    it('should return 404 if task is not found', async () => {
+      await insertUsers([admin]);
+      const taskId = new mongoose.Types.ObjectId();
+      await request(app)
+        .get(`/v1/tasks/${taskId}/status`)
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .expect(404);
+    });
+
+    it('should return UNAUTHORIZED if no bearer token is provided', async () => {
+      const taskId = '609c72ef6b64fdb1a6c81302';
+      await request(app).get(`/v1/tasks/${taskId}/status`).expect(401);
+    });
+  });
+
+  describe('GET /v1/tasks/:taskId/data', () => {
+    it('should return task data with pagination', async () => {
+      await Promise.all([insertUsers([admin]), insertTask([task])]);
+      const taskId = task._id;
+
+      const response = await request(app)
+        .get(`/v1/tasks/${taskId}/data`)
+        .query({ page: 1, limit: 10 })
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .expect(200);
+
+      expect(Array.isArray(response.body.results)).toBe(true);
+      expect(response.body.results.length).toBeLessThanOrEqual(10);
+    });
+
+    it('should return an empty array if no data is found', async () => {
+      await Promise.all([insertUsers([admin]), insertTask([task])]);
+      const taskId = task._id;
+
+      const response = await request(app)
+        .get(`/v1/tasks/${taskId}/data`)
+        .set('Authorization', `Bearer ${adminAccessToken}`)
+        .query({ page: 999, limit: 10 }) // Página alta sin datos
+        .expect(200);
+
+      expect(response.body).toEqual({
+        limit: 10,
+        page: 999,
+        results: [],
+        totalPages: 0,
+        totalResults: 0,
+      });
+    });
+
+    it('should return UNAUTHORIZED if no bearer token is provided', async () => {
+      const taskId = '609c72ef6b64fdb1a6c81302';
+      await request(app).get(`/v1/tasks/${taskId}/data`).query({ page: 1, limit: 10 }).expect(401);
+    });
+  });
+});

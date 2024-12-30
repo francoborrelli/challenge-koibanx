@@ -62,6 +62,7 @@ export const createTask = catchAsync(async (req: Request, res: Response) => {
  */
 export const getTaskStatus = catchAsync(async (req: Request, res: Response) => {
   const task = await taskService.getTaskById(new mongoose.Types.ObjectId(req.params['taskId']));
+  if (!task) return res.status(httpStatus.NOT_FOUND).send({ message: 'Task not found' });
   res.send({ status: task?.status });
 });
 
