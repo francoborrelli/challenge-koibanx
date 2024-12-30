@@ -115,7 +115,7 @@ describe('UploadedTask Routes', () => {
     });
 
     it('should return UNAUTHORIZED if no bearer token is provided', async () => {
-      const taskId = '609c72ef6b64fdb1a6c81302';
+      const taskId = task._id;
       await request(app).get(`/v1/tasks/${taskId}/status`).expect(401);
     });
   });
@@ -155,7 +155,7 @@ describe('UploadedTask Routes', () => {
     });
 
     it('should return UNAUTHORIZED if no bearer token is provided', async () => {
-      const taskId = '609c72ef6b64fdb1a6c81302';
+      const taskId = task._id;
       await request(app).get(`/v1/tasks/${taskId}/data`).query({ page: 1, limit: 10 }).expect(401);
     });
   });

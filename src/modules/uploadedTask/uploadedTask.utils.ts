@@ -24,7 +24,7 @@ import type { MappingTypes } from './uploadedTask.interfaces';
  * @returns The mapped value.
  * @throws Will throw an error if the value is invalid or the type is not recognized.
  */
-const mapExcelRow = (value: ExcelJS.CellValue, type: MappingTypes, optional: boolean) => {
+export const mapExcelRow = (value: ExcelJS.CellValue, type: MappingTypes, optional: boolean) => {
   if (!value && optional) return null;
   if (!value) throw new Error(`Valor inválido: se esperaba ${type}`);
 
@@ -44,6 +44,7 @@ const mapExcelRow = (value: ExcelJS.CellValue, type: MappingTypes, optional: boo
     case 'Array<Number>':
       return String(value)
         .split(',')
+        .map((item) => item.trim())
         .map((num) => {
           if (isNaN(Number(num.trim()))) throw new Error(`Valor inválido en el array: se esperaba Number`);
           return Number(num.trim());
@@ -58,9 +59,12 @@ const mapExcelRow = (value: ExcelJS.CellValue, type: MappingTypes, optional: boo
     case 'Array<Boolean>':
       return String(value)
         .split(',')
+        .map((item) => item.trim())
         .map((item) => {
-          if (item !== 'true' && item !== 'false' && item !== '1' && item !== '0')
+          if (item !== 'true' && item !== 'false' && item !== '1' && item !== '0') {
+            console.log('item', item);
             throw new Error(`Valor inválido en el array: se esperaba Boolean`);
+          }
           return item === 'true' || item === '1';
         });
 

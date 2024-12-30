@@ -9,7 +9,7 @@ import type { IOptions, QueryResult } from '../paginate/paginate';
  *
  ************************************************/
 
-enum AvailableMappingsTypes {
+export enum AvailableMappingsTypes {
   String = 'string',
   Number = 'number',
   Boolean = 'boolean',
