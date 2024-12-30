@@ -54,7 +54,8 @@ export const mapExcelRow = (value: ExcelJS.CellValue, type: MappingTypes, option
     case 'Array<String>':
       return String(value)
         .split(',')
-        .map((item) => item.trim());
+        .map((item) => item.trim())
+        .sort();
 
     case 'Array<Boolean>':
       return String(value)
