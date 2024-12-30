@@ -69,6 +69,11 @@ El archivo `docker-compose.yml` define los siguientes servicios:
 
    - La API estará disponible en [http://localhost:3000](http://localhost:3000).
    - Accede a la documentación de Swagger en [http://localhost:3000/v1/docs](http://localhost:3000/v1/docs) 📖.
+   - Accede a la documentación cargando el archivo de colección de Postman:
+
+     1. Abre Postman y selecciona "Importar".
+     2. Selecciona el archivo `Challenge-Koibanx.postman_collection.json` que se encuentra en el directorio raíz del proyecto.
+     3. Una vez importado, podrás ver y probar los endpoints definidos en la colección.
 
 6. Correr Seeders (Opcional)
 
