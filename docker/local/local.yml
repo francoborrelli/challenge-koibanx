@@ -24,7 +24,7 @@ services:
 
   worker:
     <<: *app-properties
-    command: yarn run worker
+    command: yarn run dev:worker
     deploy:
       replicas: 1
       restart_policy:

@@ -16,6 +16,4 @@ COPY ./src ./src
 
 RUN yarn run build
 
-COPY ./src/public ./dist/public
-
 EXPOSE 3000
