@@ -17,7 +17,8 @@
     "prettier:fix": "prettier --write **/*.ts",
     "dev": "nodemon --exec tsx ./src/index.ts",
     "bash": "docker compose exec api bash",
-    "worker": "nodemon --exec tsx ./src/workers.ts"
+    "worker": "nodemon --exec tsx ./src/workers.ts",
+    "seed": "tsx ./src/seed.ts"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

@@ -39,23 +39,42 @@ El archivo `docker-compose.yml` define los siguientes servicios:
 
 ### **Cómo levantar el proyecto** 🚀
 
-1. Asegúrate de tener instalado Docker y Docker Compose. 🐳
+1. Asegúrate de tener instalado [Docker](https://www.docker.com/) y [Docker Compose](https://docs.docker.com/compose/). 🐳
+
 2. Clona el repositorio:
    ```bash
    git clone https://github.com/francoborrelli/challenge-koibanx.git
    cd challenge-koibanx
    ```
-3. Levanta los servicios con Docker Compose:
+3. Configura los archivos de entorno:
+
+   - En el directorio raíz, crea un archivo `.env` para configurar las variables de entorno de Docker. Puedes usar el archivo `.env.example` como referencia:
+
+     ```bash
+     cp .env.example .env
+     ```
+
+   - En la carpeta `.envs`, configura los archivos de entorno específicos para la API. Por ejemplo, puedes tener archivos como `.env.development`, `.env.production`, etc. Asegúrate de que estos archivos contengan las variables necesarias para cada entorno.
+
+4. Levanta los servicios con Docker Compose:
 
    ```bash
-   docker-compose up --build
+   docker compose build
+   docker compose -d
    ```
 
    Esto descargará las imágenes necesarias, construirá las definidas en el proyecto y levantará los servicios.
 
-4. Una vez que los servicios estén corriendo:
+5. Una vez que los servicios estén corriendo:
+
    - La API estará disponible en [http://localhost:3000](http://localhost:3000).
    - Accede a la documentación de Swagger en [http://localhost:3000/v1/docs](http://localhost:3000/v1/docs) 📖.
+
+6. Correr Seeders (Opcional)
+
+   ```bash
+   docker compose exec app yarn run seed
+   ```
 
 ---
 
@@ -64,11 +83,7 @@ El archivo `docker-compose.yml` define los siguientes servicios:
 1. Asegúrate de que los servicios necesarios estén en ejecución (`mongodb` y `redis`).
 2. Accede al contenedor de la aplicación:
    ```bash
-   docker exec -it challenge-koibanx-app bash
-   ```
-3. Ejecuta los tests de Jest dentro del contenedor:
-   ```bash
-   yarn test
+   docker compose exec app yarn run test
    ```
 
 ---
@@ -79,11 +94,11 @@ Para limpiar el entorno, sigue estos pasos:
 
 1. Detén y elimina todos los contenedores asociados al proyecto:
    ```bash
-   docker-compose down
+   docker compose down
    ```
 2. Si deseas eliminar también los volúmenes (como los datos de MongoDB y los archivos subidos):
    ```bash
-   docker-compose down --volumes
+   docker compose down -v
    ```
 
 ---
@@ -134,6 +149,11 @@ Para limpiar el entorno, sigue estos pasos:
    - **`routes/v1`**
      Define las rutas de la API versión 1 (`/v1`) configurando los endpoints disponibles.
 
+   - **`seeders`**
+     Contiene scripts para poblar la base de datos con datos iniciales. Dentro de esta carpeta, encontramos:
+
+     - **`userSeed.ts`**: Script para insertar usuarios de prueba o configuración inicial en la base de datos.
+
    - **`utils`**
      Contiene utilidades y funciones comunes que son reutilizadas a lo largo del proyecto.
 
@@ -148,6 +168,9 @@ Para limpiar el entorno, sigue estos pasos:
 
    - **`workers.ts`**
      Archivo que define y ejecuta los workers para procesar tareas en segundo plano utilizando BullMQ.
+
+   - ** `seed.ts` **
+     Archivo que contiene los seeders para poblar la base de datos con datos iniciales. Este script se ejecuta para insertar datos de prueba o configuración inicial en la base de datos.
 
 ---
 
