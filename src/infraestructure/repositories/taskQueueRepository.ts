@@ -2,6 +2,7 @@ import { Processor, Queue, WorkerOptions, Worker } from 'bullmq';
 import type { ITaskQueueRepository } from '../../domain/interfaces/taskQueueRepository';
 
 import config from '../../config';
+import { ExcelProcessorService } from '../excel';
 
 type RedisConfiguration = WorkerOptions['connection'];
 
@@ -21,7 +22,10 @@ class BullmqTaskQueueRepository implements ITaskQueueRepository {
   private _queue: Queue;
   private _worker: Worker;
 
-  constructor(redisConfig: RedisConfiguration = { url: config.redis.url }) {
+  private _excelProcessor: ExcelProcessorService;
+
+  constructor(excelProcessor: ExcelProcessorService, redisConfig: RedisConfiguration = { url: config.redis.url }) {
+    this._excelProcessor = excelProcessor;
     this._queue = this.initializeQueue(redisConfig);
     this._worker = this.initializeWorker(redisConfig);
   }
@@ -38,10 +42,6 @@ class BullmqTaskQueueRepository implements ITaskQueueRepository {
     return await this._queue.add(`task upload`, { jobData: { id: task.id } });
   }
 
-  async processTask(taskId: string): Promise<void> {
-    console.log(`Processing task with ID ${taskId}`);
-  }
-
   private initializeQueue(redisConfig: RedisConfiguration) {
     return new Queue(this._queue_name, { connection: redisConfig });
   }
@@ -51,7 +51,7 @@ class BullmqTaskQueueRepository implements ITaskQueueRepository {
       console.log(`Processing job ${job.id} of type ${job.name}`);
       const { jobData } = job.data;
       const { id: taskId } = jobData;
-      await this.processTask(taskId);
+      await this._excelProcessor.processTask(taskId);
     };
     const worker = new Worker(this._queue_name, workerLogic, { ...WORKER_CONFIG, connection: redisConfig });
     worker.on('completed', (job) => {
