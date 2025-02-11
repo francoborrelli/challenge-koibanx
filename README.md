@@ -145,11 +145,11 @@ El código se organiza en capas bien definidas:
 
    - **`use-cases`**: Contiene los casos de uso que orquestan la lógica de aplicación.
 
-- **`app.ts`**
-  Archivo principal que inicia la aplicación. Aquí se configura y se arranca el servidor Express, incluyendo middleware, rutas, y configuraciones básicas.
+   - **`app.ts`**
+     Archivo principal que inicia la aplicación. Aquí se configura y se arranca el servidor Express, incluyendo middleware, rutas, y configuraciones básicas.
 
-- **`index.ts`**
-  Puede ser el punto de entrada que centraliza la inicialización de la aplicación.
+   - **`index.ts`**
+     Puede ser el punto de entrada que centraliza la inicialización de la aplicación.
 
 ```
   📦 src
