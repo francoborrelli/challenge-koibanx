@@ -1,6 +1,6 @@
-import { TOKEN_TYPES } from 'src/domain/constants/token';
+import { TOKEN_TYPES } from '../../domain/constants/token';
 
-import type { IUserRepository } from 'src/domain/interfaces/userRepository';
+import type { IUserRepository } from '../../domain/interfaces/userRepository';
 import type { ITokenRepository } from '../../domain/interfaces/tokenRepository';
 
 export class Refresh {

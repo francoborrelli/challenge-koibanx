@@ -2,7 +2,7 @@ import mongoose, { Model } from 'mongoose';
 
 import paginate from './utils/paginate';
 
-import type { IUploadTask } from 'src/domain/entities/task';
+import type { IUploadTask } from '../../domain/entities/task';
 import type { IOptions, QueryResult } from './utils/paginate/paginate.types';
 
 /*************************************************

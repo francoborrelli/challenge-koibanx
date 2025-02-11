@@ -1,4 +1,4 @@
-import type { IUserRepository } from 'src/domain/interfaces/userRepository';
+import type { IUserRepository } from '../../domain/interfaces/userRepository';
 
 export class GetUsers {
   constructor(private userRepository: IUserRepository) {}

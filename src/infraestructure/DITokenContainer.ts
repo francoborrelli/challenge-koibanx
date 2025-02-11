@@ -2,9 +2,9 @@ import { MongoUserRepository } from './repositories/userRepository';
 import { MongoTokenRepository } from './repositories/tokenRepository';
 
 // User cases
-import { Login } from 'src/use-cases/token/login';
-import { Refresh } from 'src/use-cases/token/refresh';
-import { RegisterUser } from 'src/use-cases/token/registerUser';
+import { Login } from '../use-cases/token/login';
+import { Refresh } from '../use-cases/token/refresh';
+import { RegisterUser } from '../use-cases/token/registerUser';
 
 class DITokenContainer {
   private static _usersRepository = new MongoUserRepository();

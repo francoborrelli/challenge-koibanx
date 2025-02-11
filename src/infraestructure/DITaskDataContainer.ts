@@ -1,7 +1,7 @@
 import { MongoTasksDataRepository } from './repositories/taskDataRepository';
 
 // User cases
-import { GetTaskData } from 'src/use-cases/task-data/getTaskData';
+import { GetTaskData } from '../use-cases/task-data/getTaskData';
 
 class DITaskDataContainer {
   private static _tasksDataRepository = new MongoTasksDataRepository();

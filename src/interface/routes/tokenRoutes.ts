@@ -1,30 +1,24 @@
 import { Router } from 'express';
 
-import { Permissions } from '../../domain/constants/roles';
-
-import { UserController } from '../controllers/userController';
-
 // Middlewares
-import auth from '../middlewares/auth';
 import validate from '../middlewares/validate';
 
 // Validations
-import * as userValidation from '../validations/user.validation';
+import * as authValidation from '../validations/auth.validation';
+import { TokenController } from '../controllers/tokenController';
 
 const router = Router();
 
-const userController = new UserController();
+const authController = new TokenController();
 
-router
-  .route('/')
-  .post(auth(Permissions.manageUsers), validate(userValidation.createUser), userController.create)
-  .get(auth(Permissions.getUsers), validate(userValidation.getUsers), userController.get);
-
-router
-  .route('/:userId')
-  .get(auth(Permissions.getUsers), validate(userValidation.getUser), userController.getOne)
-  .patch(auth(Permissions.manageUsers), validate(userValidation.updateUser), userController.update)
-  .delete(auth(Permissions.manageUsers), validate(userValidation.deleteUser), userController.delete);
+router.post('/register', validate(authValidation.register), authController.register);
+router.post('/login', validate(authValidation.login), authController.login);
+// router.post('/logout', validate(authValidation.logout), authController.logout);
+router.post('/refresh-tokens', validate(authValidation.refreshTokens), authController.refresh);
+// router.post('/forgot-password', validate(authValidation.forgotPassword), authController.forgotPassword);
+// router.post('/reset-password', validate(authValidation.resetPassword), authController.resetPassword);
+// router.post('/send-verification-email', auth(), authController.sendVerificationEmail);
+// router.post('/verify-email', validate(authValidation.verifyEmail), authController.verifyEmail);
 
 export default router;
 
@@ -265,4 +259,4 @@ export default router;
  *         $ref: '#/components/responses/NotFound'
  */
 
-export { router as userRoutes };
+export { router as authRoutes };

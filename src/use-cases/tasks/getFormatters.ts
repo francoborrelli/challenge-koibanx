@@ -1,4 +1,4 @@
-import { AvalilableFormatters } from 'src/domain/constants/mappings';
+import { AvalilableFormatters } from '../../domain/constants/mappings';
 
 export class GetTaskFormatters {
   constructor() {}

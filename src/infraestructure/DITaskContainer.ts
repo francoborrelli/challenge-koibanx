@@ -2,9 +2,9 @@ import { MongoTasksRepository } from './repositories/tasksRepository';
 import { BullmqTaskQueueRepository } from './repositories/taskQueueRepository';
 
 // User cases
-import { CreateTask } from 'src/use-cases/tasks/createTask';
-import { GetTaskStatus } from 'src/use-cases/tasks/getTaskStatus';
-import { GetTaskFormatters } from 'src/use-cases/tasks/getFormatters';
+import { CreateTask } from '../use-cases/tasks/createTask';
+import { GetTaskStatus } from '../use-cases/tasks/getTaskStatus';
+import { GetTaskFormatters } from '../use-cases/tasks/getFormatters';
 
 class DITaskContainer {
   private static _tasksRepository = new MongoTasksRepository();

@@ -1,10 +1,10 @@
 import { MongoUserRepository } from './repositories/userRepository';
 
 // User cases
-import { GetUsers } from 'src/use-cases/user/getUsers';
-import { CreateUser } from 'src/use-cases/user/createUser';
-import { UpdateUser } from 'src/use-cases/user/updateUser';
-import { DeleteUser } from 'src/use-cases/user/deleteUser';
+import { GetUsers } from '../use-cases/user/getUsers';
+import { CreateUser } from '../use-cases/user/createUser';
+import { UpdateUser } from '../use-cases/user/updateUser';
+import { DeleteUser } from '../use-cases/user/deleteUser';
 
 class DIUsersContainer {
   private static _usersRepository = new MongoUserRepository();

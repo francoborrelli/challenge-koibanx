@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import { DIUsersContainer } from '../../infraestructure/DIUsersContainer';
 
 // Utils
-import { pick } from '../../shared/utils';
+import pick from '../../shared/utils/pick';
 
 // Interfaces
 import type { IOptions } from '../../infraestructure/models/utils/paginate/paginate.types';

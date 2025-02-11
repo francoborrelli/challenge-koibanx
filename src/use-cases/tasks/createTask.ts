@@ -1,6 +1,6 @@
-import type { NewIUploadTaskDocData } from 'src/domain/entities/task';
-import type { ITaskRepository } from 'src/domain/interfaces/taskRepository';
-import type { ITaskQueueRepository } from 'src/domain/interfaces/taskQueueRepository';
+import type { NewIUploadTaskDocData } from '../../domain/entities/task';
+import type { ITaskRepository } from '../../domain/interfaces/taskRepository';
+import type { ITaskQueueRepository } from '../../domain/interfaces/taskQueueRepository';
 
 export class CreateTask {
   constructor(

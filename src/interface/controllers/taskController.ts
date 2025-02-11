@@ -3,8 +3,8 @@ import httpStatus from 'http-status';
 import { Request, Response } from 'express';
 
 // Interfaces
-import { DITaskContainer } from 'src/infraestructure/DITaskContainer';
-import { DITaskDataContainer } from 'src/infraestructure/DITaskDataContainer';
+import { DITaskContainer } from '../../infraestructure/DITaskContainer';
+import { DITaskDataContainer } from '../../infraestructure/DITaskDataContainer';
 
 export class TaskController {
   private _createTask = DITaskContainer.getCreateTaskUseCase();

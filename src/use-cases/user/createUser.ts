@@ -1,5 +1,5 @@
-import type { NewCreatedUser } from 'src/domain/entities/user';
-import type { IUserRepository } from 'src/domain/interfaces/userRepository';
+import type { NewCreatedUser } from '../../domain/entities/user';
+import type { IUserRepository } from '../../domain/interfaces/userRepository';
 
 export class CreateUser {
   constructor(private userRepository: IUserRepository) {}

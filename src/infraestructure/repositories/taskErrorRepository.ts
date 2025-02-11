@@ -4,7 +4,7 @@ import { UploadTaskError } from '../models/taskErrorModel';
 // Interfaces
 import type { IOptions } from '../models/utils/paginate/paginate.types';
 import type { ITaskErrorRepository } from '../../domain/interfaces/taskRepository';
-import type { NewIUploadTaskError, IUploadTaskError } from 'src/domain/entities/task';
+import type { NewIUploadTaskError, IUploadTaskError } from '../../domain/entities/task';
 
 export class MongoTasksErrorRepository implements ITaskErrorRepository {
   /**
