@@ -5,9 +5,9 @@ import config from '../../config';
 
 // Routes
 import docsRoute from './swagger';
+import taskRoute from './taskRoutes';
 import authRoute from './tokenRoutes';
 import userRoute from './usersRoutes';
-// import taskRoute from './uploadedTask.route';
 
 const router = express.Router();
 
@@ -33,10 +33,10 @@ const defaultIRoute: IRoute[] = [
     path: '/users',
     route: userRoute,
   },
-  // {
-  //   path: '/tasks',
-  //   route: taskRoute,
-  // },
+  {
+    path: '/tasks',
+    route: taskRoute,
+  },
 ];
 
 /**

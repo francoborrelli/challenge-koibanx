@@ -1,14 +1,15 @@
 import Joi from 'joi';
-import { objectId } from '../../validations';
+
+import { objectId } from './custom.validation';
+import { AvalilableFormatters } from '../../domain/constants/mappings';
 
 // Constants
-import { AVAILABLE_FORTATTERS } from '../../domain/constants/uploadedTask.constants';
 
 export const createValidation = Joi.object({
   body: Joi.object().keys({
     formatter: Joi.number()
       .required()
-      .valid(...Object.keys(AVAILABLE_FORTATTERS).map(Number)),
+      .valid(...Object.keys(AvalilableFormatters).map(Number)),
   }),
 });
 

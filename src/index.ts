@@ -5,9 +5,9 @@ import mongoose from 'mongoose';
 
 // Config
 import config from './config';
-import { logger } from './infraestructure/logger';
 
 // Utils
+import { logger } from './infraestructure/logger';
 
 let server: any;
 

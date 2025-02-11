@@ -5,6 +5,7 @@ import { Request, Response } from 'express';
 // Interfaces
 import { DITaskContainer } from '../../infraestructure/DITaskContainer';
 import { DITaskDataContainer } from '../../infraestructure/DITaskDataContainer';
+import { DITaskErrorContainer } from '../../infraestructure/DITaskErrorContainer';
 
 export class TaskController {
   private _createTask = DITaskContainer.getCreateTaskUseCase();
@@ -12,6 +13,7 @@ export class TaskController {
   private _getTaskFormatters = DITaskContainer.getFormattersUseCase();
 
   private _getTaskData = DITaskDataContainer.getTaskDataUseCase();
+  private _getTaskErrors = DITaskErrorContainer.getTaskErrorUseCase();
 
   async createTask(req: Request, res: Response) {
     const { task } = req.body;
@@ -34,5 +36,11 @@ export class TaskController {
     const { taskId } = req.params;
     const taskData = await this._getTaskData.execute(taskId, req.query);
     res.send(taskData);
+  }
+
+  async getTaskErrors(req: Request, res: Response) {
+    const { taskId } = req.params;
+    const taskErrors = await this._getTaskErrors.execute(taskId, req.query);
+    res.send(taskErrors);
   }
 }
