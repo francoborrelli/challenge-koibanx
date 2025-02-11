@@ -35,6 +35,8 @@ export class MongoTasksErrorRepository implements ITaskErrorRepository {
     const filters: Record<string, any> = { uploadTask: taskId };
     if (row) filters['row'] = row;
     if (column) filters['column'] = column;
-    return UploadTaskError.paginate(filters, { page, limit, projectBy: 'row column message -_id' });
+    const data = await UploadTaskError.paginate(filters, { page, limit, projectBy: 'row column message -_id' });
+    console.log(data);
+    return data;
   }
 }

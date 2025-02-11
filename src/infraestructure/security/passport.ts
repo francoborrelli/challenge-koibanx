@@ -11,8 +11,8 @@ import { TOKEN_TYPES } from '../../domain/constants/token';
 import type { JwtPayload } from 'jsonwebtoken';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 
-export interface IPayload extends JwtPayload {
-  sub: string;
+export interface IPayload extends Omit<JwtPayload, 'sub'> {
+  sub: { id: string };
   iat: number;
   exp: number;
   type: string;
@@ -29,7 +29,7 @@ const jwtStrategy = new JwtStrategy(
         throw new Error('Invalid token type');
       }
       const getUsers = DIUsersContainer.getUsersUseCase();
-      const user = await getUsers.executeById(payload.sub);
+      const user = await getUsers.executeById(payload.sub.id);
       if (!user) {
         return done(null, false);
       }

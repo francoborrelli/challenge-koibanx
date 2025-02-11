@@ -51,8 +51,8 @@ export class MongoTasksRepository implements ITaskRepository {
    * @param {IUploadTaskDoc} task - The task data to update
    * @returns {Promise<void>}
    */
-  async update(task: IUploadTask): Promise<void> {
-    await TaskModel.findByIdAndUpdate(task._id, task);
+  async update(id: string, task: Partial<IUploadTask>): Promise<void> {
+    await TaskModel.findByIdAndUpdate(id, task);
   }
 
   /**

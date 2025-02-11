@@ -35,6 +35,9 @@ export class MongoTasksDataRepository implements ITaskDataRepository {
     if (row) filters['row'] = row;
     if (column) filters['column'] = column;
     const data = await UploadTaskData.paginate(filters, { page, limit, projectBy: 'data -_id' });
+
+    console.log(data);
+
     return { ...data, results: (data.results as unknown as IUploadTaskData[]).map((a) => a.data) };
   }
 }

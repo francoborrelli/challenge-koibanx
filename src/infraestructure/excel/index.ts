@@ -29,6 +29,8 @@ export class ExcelProcessorService implements IExcelProcessorService {
         return reject('No se encontró la tarea con el ID especificado');
       }
 
+      await this._taskRepository.update(task._id, { status: 'processing' });
+
       const filePath = path.resolve(task.filepath);
       const errors: { row: number; column: number; message: string }[] = [];
 
@@ -74,6 +76,8 @@ export class ExcelProcessorService implements IExcelProcessorService {
             }
           }
         }
+
+        await this._taskRepository.update(task._id, { status: 'done' });
 
         resolve(null);
       } catch (error) {

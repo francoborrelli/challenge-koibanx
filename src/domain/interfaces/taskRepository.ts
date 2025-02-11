@@ -10,7 +10,7 @@ export interface ITaskRepository {
   findAll(): Promise<ITask[]>;
   findById(id: string): Promise<ITask | null>;
   create(task: NewIUploadTaskDocData): Promise<ITask>;
-  update(task: ITask): Promise<void>;
+  update(id: string, task: Partial<ITask>): Promise<void>;
   delete(id: string): Promise<void>;
 }
 
