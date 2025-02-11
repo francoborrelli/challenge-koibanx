@@ -1,5 +1,5 @@
 import multer from 'multer';
-import config from '../config/config';
+import config from '../../config';
 
 const ALLOWED_TYPES = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
 

@@ -14,33 +14,32 @@ export class TaskController {
 
   private _getTaskData = DITaskDataContainer.getTaskDataUseCase();
   private _getTaskErrors = DITaskErrorContainer.getTaskErrorUseCase();
-
-  async createTask(req: Request, res: Response) {
+  createTask = async (req: Request, res: Response) => {
     const { task } = req.body;
     const taskCreated = await this._createTask.execute(task);
     res.status(httpStatus.CREATED).send(taskCreated);
-  }
+  };
 
-  async getTaskStatus(req: Request, res: Response) {
+  getTaskStatus = async (req: Request, res: Response) => {
     const { taskId } = req.params;
     const taskStatus = await this._getTaskStatus.execute(taskId);
     res.send(taskStatus);
-  }
+  };
 
-  async getTaskFormatters(req: Request, res: Response) {
+  getTaskFormatters = async (req: Request, res: Response) => {
     const formatters = await this._getTaskFormatters.execute();
     res.send(formatters);
-  }
+  };
 
-  async getTaskData(req: Request, res: Response) {
+  getTaskData = async (req: Request, res: Response) => {
     const { taskId } = req.params;
     const taskData = await this._getTaskData.execute(taskId, req.query);
     res.send(taskData);
-  }
+  };
 
-  async getTaskErrors(req: Request, res: Response) {
+  getTaskErrors = async (req: Request, res: Response) => {
     const { taskId } = req.params;
     const taskErrors = await this._getTaskErrors.execute(taskId, req.query);
     res.send(taskErrors);
-  }
+  };
 }

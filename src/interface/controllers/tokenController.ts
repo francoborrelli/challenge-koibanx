@@ -12,13 +12,13 @@ export class TokenController {
   private _refresh = DITokenContainer.getRefreshTokenUseCase();
   private _register = DITokenContainer.getRegisterUserUseCase();
 
-  async login(req: Request, res: Response) {
+  login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const user = await this._login.execute(email, password);
     res.send(user);
-  }
+  };
 
-  async refresh(req: Request, res: Response) {
+  refresh = async (req: Request, res: Response) => {
     const { refreshToken } = req.body;
     try {
       const user = await this._refresh.execute(refreshToken);
@@ -26,11 +26,11 @@ export class TokenController {
     } catch (error) {
       throw new ApiError(httpStatus.UNAUTHORIZED, 'Please authenticate');
     }
-  }
+  };
 
-  async register(req: Request, res: Response) {
+  register = async (req: Request, res: Response) => {
     const body = req.body as NewRegisteredUser;
     const user = await this._register.execute(body);
     res.status(httpStatus.CREATED).send(user);
-  }
+  };
 }
