@@ -1,6 +1,6 @@
 import { Model, Document } from 'mongoose';
 
-import { QueryResult as QR } from 'src/domain/entities/pagination';
+import { QueryResult as QR } from '../../../../domain/entities/pagination';
 
 export interface QueryResult extends QR {
   results: Document[];

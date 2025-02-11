@@ -1,8 +1,8 @@
 import mongoose, { Model } from 'mongoose';
 import paginate from './utils/paginate';
 
+import type { IUploadTaskError } from '../../domain/entities/task';
 import type { IOptions, QueryResult } from './utils/paginate/paginate.types';
-import { IUploadTaskError } from 'src/domain/entities/task';
 
 /*************************************************
  *

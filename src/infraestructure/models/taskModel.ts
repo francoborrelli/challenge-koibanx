@@ -1,4 +1,5 @@
 import mongoose, { Model } from 'mongoose';
+
 import paginate from './utils/paginate';
 
 import type { IUploadTask } from 'src/domain/entities/task';
@@ -43,8 +44,7 @@ const uploadTaskSchema = new mongoose.Schema<IUploadTask, IUploadTaskModel>(
       required: true,
     },
     uploaded_by: {
-      //       type: mongoose.Schema.Types.ObjectId,
-      type: mongoose.Schema.Types.String,
+      type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: false,
     },

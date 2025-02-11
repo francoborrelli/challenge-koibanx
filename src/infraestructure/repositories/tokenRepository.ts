@@ -6,13 +6,15 @@ import dayjs, { Dayjs } from 'dayjs';
 
 // Interfaces
 import { ITokenDoc, TokenModel } from '../models/tokenModel';
-import type { ITokenRepository } from 'src/domain/interfaces/tokenRepository';
+import type { AccessAndRefreshTokens } from '../../domain/entities/token';
+import type { ITokenRepository } from '../../domain/interfaces/tokenRepository';
 
 // Constants
 import config from '../../config';
 import { TOKEN_TYPES, TokenTypesEnum } from '../../domain/constants/token';
 
 export class MongoTokenRepository implements ITokenRepository {
+  /** @description The secret key used to sign JWT tokens */
   private secret: string;
 
   constructor(secret: string = config.jwt.secret) {
@@ -24,7 +26,6 @@ export class MongoTokenRepository implements ITokenRepository {
    * @param {mongoose.Types.ObjectId} userId
    * @param {Moment} expires
    * @param {string} type
-   * @param {string} [secret]
    * @returns {string}
    */
   generateToken(userId: mongoose.Types.ObjectId, expires: Dayjs, type: string) {
@@ -37,6 +38,15 @@ export class MongoTokenRepository implements ITokenRepository {
     return jwt.sign(payload, this.secret);
   }
 
+  /**
+   * Save a token
+   * @param {string} token
+   * @param {mongoose.Types.ObjectId} userId
+   * @param {Moment} expires
+   * @param {string} type
+   * @param {boolean} [blacklisted]
+   * @returns {Promise<ITokenDoc>}
+   */
   async saveToken(
     token: string,
     userId: mongoose.Types.ObjectId,
@@ -54,6 +64,12 @@ export class MongoTokenRepository implements ITokenRepository {
     return tokenDoc;
   }
 
+  /**
+   * Verify token and return token doc (or throw an error if it is not valid)
+   * @param {string} token
+   * @param {string} type
+   * @returns {Promise<ITokenDoc>}
+   */
   async verifyToken(token: string, type: string) {
     const payload = jwt.verify(token, config.jwt.secret);
 
@@ -71,6 +87,47 @@ export class MongoTokenRepository implements ITokenRepository {
     return tokenDoc;
   }
 
+  /**
+   * Generate a token for a specific purpose
+   * @param {mongoose.Types.ObjectId} userId
+   * @param {string} type
+   * @param {number} expirationMinutes
+   * @returns {Promise<string>}
+   */
+  private async generateSpecificToken(
+    userId: mongoose.Types.ObjectId,
+    type: string,
+    expirationMinutes: number
+  ): Promise<string> {
+    const expires = dayjs().add(expirationMinutes, 'minutes');
+    const token = this.generateToken(userId, expires, type);
+    await this.saveToken(token, userId, expires, type);
+    return token;
+  }
+
+  /**
+   * Generate reset password token
+   * @param {mongoose.Types.ObjectId} userId
+   * @returns {Promise<string>}
+   */
+  async generateResetPasswordToken(userId: mongoose.Types.ObjectId): Promise<string> {
+    return this.generateSpecificToken(userId, TOKEN_TYPES.RESET_PASSWORD, config.jwt.resetPasswordExpirationMinutes);
+  }
+
+  /**
+   * Generate verify email token
+   * @param {mongoose.Types.ObjectId} userId
+   * @returns {Promise<string>}
+   */
+  async generateVerifyEmailToken(userId: mongoose.Types.ObjectId): Promise<string> {
+    return this.generateSpecificToken(userId, TOKEN_TYPES.VERIFY_EMAIL, config.jwt.verifyEmailExpirationMinutes);
+  }
+
+  /**
+   * Generate auth tokens
+   * @param {mongoose.Types.ObjectId} userId
+   * @returns {Promise<AccessAndRefreshTokens>}
+   */
   async generateAuthTokens(userId: mongoose.Types.ObjectId) {
     const accessTokenExpires = dayjs().add(config.jwt.accessExpirationMinutes, 'minutes');
     const accessToken = this.generateToken(userId, accessTokenExpires, TOKEN_TYPES.ACCESS);
@@ -88,21 +145,7 @@ export class MongoTokenRepository implements ITokenRepository {
         token: refreshToken,
         expires: refreshTokenExpires.toDate(),
       },
-    };
-  }
-
-  async generateResetPasswordToken(userId: mongoose.Types.ObjectId) {
-    const expires = dayjs().add(config.jwt.resetPasswordExpirationMinutes, 'minutes');
-    const resetPasswordToken = this.generateToken(userId, expires, TOKEN_TYPES.RESET_PASSWORD);
-    await this.saveToken(resetPasswordToken, userId, expires, TOKEN_TYPES.RESET_PASSWORD);
-    return resetPasswordToken;
-  }
-
-  async generateVerifyEmailToken(userId: mongoose.Types.ObjectId) {
-    const expires = dayjs().add(config.jwt.verifyEmailExpirationMinutes, 'minutes');
-    const verifyEmailToken = this.generateToken(userId, expires, TOKEN_TYPES.VERIFY_EMAIL);
-    await this.saveToken(verifyEmailToken, userId, expires, TOKEN_TYPES.VERIFY_EMAIL);
-    return verifyEmailToken;
+    } as AccessAndRefreshTokens;
   }
 
   async deleteUserTokens(userId: mongoose.Types.ObjectId, type?: TokenTypesEnum) {
