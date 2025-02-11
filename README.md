@@ -126,6 +126,8 @@ Para limpiar el entorno, sigue estos pasos:
 
 #### **Carpetas principales**:
 
+El código se organiza en capas bien definidas:
+
 1. **`.envs`**
    Contiene las configuraciones de entorno organizadas por perfiles, como desarrollo, producción, etc. Ayuda a gestionar variables de entorno de forma segura.
 
@@ -135,47 +137,51 @@ Para limpiar el entorno, sigue estos pasos:
 3. **`src`**
    El código fuente principal de la aplicación. Dentro de esta carpeta, encontramos subdirectorios clave:
 
-   - **`config`**
-     Contiene configuraciones y utilidades globales, como la configuración de roles y permisos.
+- **`domain`**: Define la lógica de negocio pura sin dependencias externas.
+- **`infrastructure`**: Implementaciones específicas de la tecnología utilizada.
+- **`interface`**: Define cómo la aplicación interactúa con el mundo exterior.
+- **`use-cases`**: Contiene los casos de uso que orquestan la lógica de aplicación.
 
-   - **`modules`**
-     Esta carpeta agrupa funcionalidades específicas de la aplicación organizadas como módulos independientes:
+📦 src
+┣ 📂 domain # Capa de dominio con lógica de negocio y definiciones centrales
+┃ ┣ 📂 constants # Constantes globales del dominio
+┃ ┣ 📂 entities # Entidades de negocio (modelos de datos)
+┃ ┗ 📂 interfaces # Interfaces para definir contratos de comunicación
+┣ 📂 infrastructure # Infraestructura del sistema (acceso a datos, contenedores DI, etc.)
+┃ ┣ 📂 excel # Manejo de archivos Excel
+┃ ┣ 📂 logger # Configuración de logs
+┃ ┣ 📂 models # Modelos de datos a nivel infraestructura
+┃ ┣ 📂 repositories # Implementaciones de acceso a datos
+┃ ┣ 📂 security # Seguridad y autenticación
+┃ ┣ 📂 seeders # Seeders para inicializar la base de datos
+┃ ┃ ┣ 📜 DIQueueContainer.ts
+┃ ┃ ┣ 📜 DITaskContainer.ts
+┃ ┃ ┣ 📜 DITaskDataContainer.ts
+┃ ┃ ┣ 📜 DITaskErrorContainer.ts
+┃ ┃ ┣ 📜 DITokenContainer.ts
+┃ ┃ ┗ 📜 DIUsersContainer.ts
+┣ 📂 interface # Interfaz con el mundo exterior (API REST, middlewares, validaciones)
+┃ ┣ 📂 controllers # Controladores de la API
+┃ ┣ 📂 middlewares # Middlewares para la API
+┃ ┣ 📂 routes # Definición de rutas
+┃ ┗ 📂 validations # Validaciones de entrada de datos
+┣ 📂 scripts # Scripts auxiliares para tareas específicas
+┃ ┣ 📜 seed.ts # Script para inicializar la base de datos
+┃ ┗ 📜 workers.ts # Workers para procesamiento en segundo plano
+┣ 📂 shared/utils # Utilidades compartidas
+┗ 📂 use-cases # Casos de uso de la aplicación (lógica de aplicación)
 
-     - **`auth`**: Funcionalidades relacionadas con autenticación y autorización.
-     - **`errors`**: Gestión y definición de errores personalizados.
-     - **`logger`**: Configuración de logging para monitoreo y debugging.
-     - **`paginate`**: Implementación de lógica de paginación para endpoints o consultas.
-     - **`swagger`**: Configuración de Swagger para generar la documentación de la API.
-     - **`toJSON`**: Utilidades para transformar objetos en formato JSON.
-     - **`token`**: Lógica para manejo de tokens (JWT, por ejemplo).
-     - **`uploadedTask`**: Funcionalidades específicas para manejar las tareas subidas.
-     - **`user`**: Módulo para gestionar usuarios de la aplicación.
+- **`app.ts`**
+  Archivo principal que inicia la aplicación. Aquí se configura y se arranca el servidor Express, incluyendo middleware, rutas, y configuraciones básicas.
 
-   - **`routes/v1`**
-     Define las rutas de la API versión 1 (`/v1`) configurando los endpoints disponibles.
+- **`index.ts`**
+  Puede ser el punto de entrada que centraliza la inicialización de la aplicación.
 
-   - **`seeders`**
-     Contiene scripts para poblar la base de datos con datos iniciales. Dentro de esta carpeta, encontramos:
+- **`workers.ts`**
+  Archivo que define y ejecuta los workers para procesar tareas en segundo plano utilizando BullMQ.
 
-     - **`userSeed.ts`**: Script para insertar usuarios de prueba o configuración inicial en la base de datos.
-
-   - **`utils`**
-     Contiene utilidades y funciones comunes que son reutilizadas a lo largo del proyecto.
-
-   - **`validations`**
-     Implementa lógica de validación para datos de entrada, usando la librería `Joi`.
-
-   - **`app.ts`**
-     Archivo principal que inicia la aplicación. Aquí se configura y se arranca el servidor Express, incluyendo middleware, rutas, y configuraciones básicas.
-
-   - **`index.ts`**
-     Puede ser el punto de entrada que centraliza la inicialización de la aplicación.
-
-   - **`workers.ts`**
-     Archivo que define y ejecuta los workers para procesar tareas en segundo plano utilizando BullMQ.
-
-   - ** `seed.ts` **
-     Archivo que contiene los seeders para poblar la base de datos con datos iniciales. Este script se ejecuta para insertar datos de prueba o configuración inicial en la base de datos.
+- ** `seed.ts` **
+  Archivo que contiene los seeders para poblar la base de datos con datos iniciales. Este script se ejecuta para insertar datos de prueba o configuración inicial en la base de datos.
 
 ---
 
