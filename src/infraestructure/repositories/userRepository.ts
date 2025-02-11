@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-import type { IUser, NewCreatedUser } from '../../domain/entities/user';
+import type { IUser, NewRegisteredUser } from '../../domain/entities/user';
 import type { IUserRepository } from '../../domain/interfaces/userRepository';
 
 import { UserModel } from '../models/userModel';
@@ -44,7 +44,7 @@ export class MongoUserRepository implements IUserRepository {
    * @param {NewCreatedUser} user - The user data to create
    * @returns {Promise<IUser>} - The created user document
    */
-  async create(user: NewCreatedUser): Promise<IUser> {
+  async create(user: NewRegisteredUser): Promise<IUser> {
     const newUser = new UserModel(user);
     await newUser.save();
     return newUser;

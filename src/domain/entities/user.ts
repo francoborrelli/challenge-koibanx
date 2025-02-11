@@ -22,6 +22,6 @@ export interface IUser {
 
 export type UpdateUserBody = Partial<IUser>;
 
-export type NewRegisteredUser = Omit<IUser, 'role' | 'isEmailVerified'>;
+export type NewRegisteredUser = Omit<IUser, 'role' | 'isEmailVerified' | 'isPasswordMatch' | '_id'>;
 
 export type NewCreatedUser = Omit<IUser, 'isEmailVerified' | '_id'>;

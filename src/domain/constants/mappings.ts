@@ -11,3 +11,8 @@ export enum AvailableMappingsTypes {
 export type MappingTypes = keyof typeof AvailableMappingsTypes;
 
 export const MappingsArray = Object.keys(AvailableMappingsTypes) as MappingTypes[];
+
+export const AvalilableFormatters: Record<number, Record<string, MappingTypes>> = {
+  0: { name: 'String', age: 'Number', nums: 'Array<Number>' },
+  1: { name: 'Number', age: 'String', 'nums?': 'Array<Number>' },
+};
