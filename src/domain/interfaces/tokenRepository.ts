@@ -3,7 +3,7 @@ import type { AccessAndRefreshTokens } from '../entities/token';
 
 export interface ITokenRepository {
   generateToken(userId: any, expires: any, type: string): string;
-  verifyToken(token: string, type: string): Promise<any>;
+  verifyToken(token: string, type: string): Promise<{ user: any }>;
   saveToken(token: string, userId: any, expires: any, type: string, blacklisted: boolean): Promise<any>;
   generateAuthTokens(userId: any): Promise<AccessAndRefreshTokens>;
   generateResetPasswordToken(userId: any): Promise<string>;

@@ -77,4 +77,10 @@ export class MongoUserRepository implements IUserRepository {
   async query(filter: Record<string, any>, options: IOptions): Promise<QueryResult> {
     return await UserModel.paginate(filter, options);
   }
+
+  async validateUserPassword(email: string, password: string): Promise<IUser | null> {
+    const user = await this.findByEmail(email);
+    if (!user || !(await user.isPasswordMatch(password))) return null;
+    return user;
+  }
 }

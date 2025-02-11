@@ -15,6 +15,9 @@ export interface IUser {
 
   /** @description Indicates whether the user's email has been verified  */
   isEmailVerified: boolean;
+
+  /** @description Method to check if the provided password matches the user's password */
+  isPasswordMatch(password: string): Promise<boolean>;
 }
 
 export type UpdateUserBody = Partial<IUser>;
