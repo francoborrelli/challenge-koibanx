@@ -8,6 +8,7 @@ import config from './config';
 
 // Utils
 import { logger } from './infraestructure/logger';
+import { DIQueueContainer } from './infraestructure/DIQueueContainer';
 
 let server: any;
 
@@ -55,6 +56,7 @@ const exitHandler = async () => {
   if (server) {
     server.close(() => {
       mongoose.disconnect(); // Desconectar MongoDB al cerrar el servidor
+      DIQueueContainer.getQueueRepository().getQueue().disconnect();
       logger.info('Server closed');
       process.exit(1);
     });

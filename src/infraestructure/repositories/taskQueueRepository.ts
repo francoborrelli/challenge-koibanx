@@ -30,11 +30,11 @@ class BullmqTaskQueueRepository implements ITaskQueueRepository {
     this._worker = this.initializeWorker(redisConfig);
   }
 
-  getQueue(): any {
+  getQueue(): Queue {
     return this._queue;
   }
 
-  getWorker(): any {
+  getWorker(): Worker {
     return this._worker;
   }
 

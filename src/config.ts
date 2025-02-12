@@ -52,9 +52,9 @@ const config = {
     resetPasswordExpirationMinutes: Number(envVars.JWT_RESET_PASSWORD_EXPIRATION_MINUTES),
     verifyEmailExpirationMinutes: Number(envVars.JWT_VERIFY_EMAIL_EXPIRATION_MINUTES),
     cookieOptions: {
+      signed: true,
       httpOnly: true,
       secure: envVars.NODE_ENV === 'production',
-      signed: true,
     },
   },
 };
