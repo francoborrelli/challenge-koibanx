@@ -40,7 +40,7 @@ export class IUploadTask {
   }
 }
 
-export type NewIUploadTaskDocData = Pick<IUploadTask, 'filename' | 'filepath' | 'formatter' | 'uploaded_by'>;
+export type NewIUploadTaskDocData = Pick<IUploadTask, 'filename' | 'filepath' | 'formatter'>;
 
 export class IUploadTaskData {
   _id: any;

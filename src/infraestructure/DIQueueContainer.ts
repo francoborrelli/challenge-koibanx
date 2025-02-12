@@ -20,6 +20,10 @@ class DIQueueContainer {
   static getQueueRepository() {
     return this._tasksQueueRepository;
   }
+
+  static disconnect() {
+    return this._tasksQueueRepository.disconnect();
+  }
 }
 
 export { DIQueueContainer };

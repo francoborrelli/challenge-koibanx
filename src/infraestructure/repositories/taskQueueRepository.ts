@@ -38,6 +38,10 @@ class BullmqTaskQueueRepository implements ITaskQueueRepository {
     return this._worker;
   }
 
+  disconnect(): Promise<void> {
+    return this._queue.disconnect();
+  }
+
   async addToQueue(task: any) {
     return await this._queue.add(`task upload`, { jobData: { id: task.id } });
   }

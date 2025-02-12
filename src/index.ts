@@ -56,7 +56,7 @@ const exitHandler = async () => {
   if (server) {
     server.close(() => {
       mongoose.disconnect(); // Desconectar MongoDB al cerrar el servidor
-      DIQueueContainer.getQueueRepository().getQueue().disconnect();
+      DIQueueContainer.disconnect();
       logger.info('Server closed');
       process.exit(1);
     });
